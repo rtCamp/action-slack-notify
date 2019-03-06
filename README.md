@@ -18,7 +18,7 @@ workflow "" {
 }
 
 action "Slack Notification" {
-  uses = "rtCamp/github-actions-library/notification/slack@master"
+  uses = "rtCamp/action-slack-notify@master"
   env = {
     SLACK_MESSAGE = "Commit received :rocket:",
     SLACK_USERNAME = "bot-account"
