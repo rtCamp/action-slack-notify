@@ -11,11 +11,6 @@ if [[ -z "$SLACK_CHANNEL" ]]; then
 	user_slack_channel=$(cat "$hosts_file" | shyaml get-value "$CI_SCRIPT_OPTIONS.slack-channel" | tr '[:upper:]' '[:lower:]')
 fi
 
-if [[ -z "$user_slack_channel" ]] && [[ -z "$SLACK_CHANNEL" ]]; then
-	echo "Slack Channel has nost been set. Disabling slack notification."
-	exit 1
-fi
-
 if [[ -n "$user_slack_channel" ]]; then
 	export SLACK_CHANNEL="$user_slack_channel"
 fi
