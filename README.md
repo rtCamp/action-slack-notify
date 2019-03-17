@@ -30,7 +30,7 @@ action "Slack Notification" {
 3. Define `SLACK_WEBHOOK` as a [GitHub Actions Secret](https://developer.github.com/actions/creating-workflows/storing-secrets). (You can add secrets using the visual workflow editor or the repository settings.)
 4. Whenever you commit, this action will run.
 
-## Configuration
+## Environment Variables
 
 ```bash
 # The Slack-assigned webhook
@@ -48,10 +48,27 @@ SLACK_COLOR="#efefef"
 # The name of the sender of the message. Does not need to be a "real" username
 SLACK_USERNAME="notify-bot"
 ```
+## Additional Vault Support
 
-## Base image
+Instead of setting up `secrets = ["SLACK_WEBHOOK"]`, slack webhook can also be read from [vault](https://www.vaultproject.io/). In vault, the slack webhook should be setup as field `webhook` on path `secret/slack`.
 
-This action uses [technosophos/slack-notify](https://hub.docker.com/r/technosophos/slack-notify) as the base image. The reason for creating this action is to have zero compatibility issues when we add custom functionality.
+Example usage with vault setup:
+
+```bash
+workflow "" {
+  resolves = ["Slack Notification"]
+  on = "push"
+}
+
+action "Slack Notification" {
+  uses = "rtCamp/action-slack-notify@master"
+  env = {
+    SLACK_MESSAGE = "Commit received :rocket:",
+    SLACK_USERNAME = "bot-account"
+  }
+  secrets = ["VAULT_ADDR", "VAULT_TOKEN"]
+}
+```
 
 ## License
 
