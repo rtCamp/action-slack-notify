@@ -39,6 +39,6 @@ if [[ -f "$hosts_file" ]]; then
 	fi
 fi
 
-export SLACK_MESSAGE=${SLACK_MESSAGE:-TEMPLATE_SLACK_MESSAGE}
+export SLACK_MESSAGE=${SLACK_MESSAGE:-$TEMPLATE_SLACK_MESSAGE}
 
 slack-notify "$@"
