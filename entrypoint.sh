@@ -33,9 +33,12 @@ if [[ -f "$hosts_file" ]]; then
 	site="${temp_url##*sites/}"
 
 	if [[ -n "$site" ]]; then
-		export SLACK_MESSAGE="Deployed successfully on site: \`$site\` for branch \`$GITHUB_BRANCH\` :tada: on server: \`$hostname\` :rocket:"
+		export TEMPLATE_SLACK_MESSAGE="Deployed successfully on site: \`$site\` for branch \`$GITHUB_BRANCH\` :tada: on server: \`$hostname\` :rocket:"
 	else
-		export SLACK_MESSAGE="Deployed successfully on \`$hostname\` for branch \`$GITHUB_BRANCH\` :tada: on path: \`$deploy_path\` :rocket:"
+		export TEMPLATE_SLACK_MESSAGE="Deployed successfully on \`$hostname\` for branch \`$GITHUB_BRANCH\` :tada: on path: \`$deploy_path\` :rocket:"
 	fi
 fi
+
+export SLACK_MESSAGE=${SLACK_MESSAGE:-TEMPLATE_SLACK_MESSAGE}
+
 slack-notify "$@"
