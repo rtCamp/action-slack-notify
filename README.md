@@ -2,6 +2,8 @@
 
 A [GitHub Action](https://github.com/features/actions) that can be used to send a message to a Slack channel.
 
+This action is a part of [GitHub action library](https://github.com/rtCamp/github-actions-library/) created by [rtCamp](https://github.com/rtCamp/).
+
 ## Installation
 
 To use this GitHub Action, you must have access to GitHub Actions. GitHub Actions are currently only available in public beta (you must [apply for access](https://github.com/features/actions)).
