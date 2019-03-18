@@ -52,6 +52,8 @@ SLACK_USERNAME="notify-bot"
 
 Instead of setting up `secrets = ["SLACK_WEBHOOK"]`, slack webhook can also be read from [vault](https://www.vaultproject.io/). In vault, the slack webhook should be setup as field `webhook` on path `secret/slack`.
 
+`VAULT_ADDR` secret variable specifies the address on which vault is deployed, e.g., `VAULT_ADDR=https://example.com:8200`. [VAULT_TOKEN](https://www.vaultproject.io/docs/concepts/tokens.html) is the token by which authentication with vault will be possible to retrieve the secrets and information.
+
 Example usage with vault setup:
 
 ```bash
