@@ -2,6 +2,8 @@
 
 A [GitHub Action](https://github.com/features/actions) that can be used to send a message to a Slack channel.
 
+![Slack Notify Action demo](https://user-images.githubusercontent.com/8456197/54735458-5439da80-4bcc-11e9-9931-393e32c79ad1.png)
+
 This action is a part of [GitHub action library](https://github.com/rtCamp/github-actions-library/) created by [rtCamp](https://github.com/rtCamp/).
 
 ## Installation
