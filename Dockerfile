@@ -1,5 +1,11 @@
 FROM golang:1.11-alpine3.9@sha256:7a0bf914dd581a35afb054bc02c6b7a3fa31ed6398adf95ac88fb1efffe89cf6 AS builder
 
+LABEL "com.github.actions.icon"="bell"
+LABEL "com.github.actions.color"="yellow"
+LABEL "com.github.actions.name"="Slack Notify"
+LABEL "com.github.actions.description"="This action will send notification to Slack"
+
+
 WORKDIR ${GOPATH}/src/github.com/rtcamp/action-slack-notify
 COPY main.go ${GOPATH}/src/github.com/rtcamp/action-slack-notify
 
