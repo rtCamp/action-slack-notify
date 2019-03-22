@@ -16,7 +16,7 @@ You can use this action after any other action to send success or failure notifi
 2. Add the following code to the `main.workflow` file and commit it to the repo's `master` branch.
 
 ```bash
-workflow "" {
+workflow "Slack Notification with GH Actions" {
   resolves = ["Slack Notification"]
   on = "push"
 }
