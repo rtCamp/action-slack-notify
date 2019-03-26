@@ -34,6 +34,8 @@ type Attachment struct {
 	Pretext    string  `json:"pretext,omitempty"`
 	Color      string  `json:"color,omitempty"`
 	AuthorName string  `json:"author_name,omitempty"`
+	AuthorLink string  `json:"author_link,omitempty"`
+	AuthorIcon string  `json:"author_icon,omitempty"`
 	Fields     []Field `json:"fields,omitempty"`
 	
 }
@@ -63,18 +65,39 @@ func main() {
 		Attachments: []Attachment{
 			{
 				Fallback: envOr(EnvSlackMessage, "GITHUB_ACTION=${GITHUB_ACTION} \n GITHUB_ACTOR=${GITHUB_ACTOR} \n GITHUB_EVENT_NAME=${GITHUB_EVENT_NAME} \n GITHUB_REF=${GITHUB_REF} \n GITHUB_REPOSITORY=${GITHUB_REPOSITORY} \n GITHUB_WORKFLOW=${GITHUB_WORKFLOW}"),
-				Color:    envOr(EnvSlackColor, "good"),
+				Color:      envOr(EnvSlackColor, "good"),
 				AuthorName: envOr(EnvGithubActor, ""),
+				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
+            	AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
 				Fields: []Field{
-					{
-						Title: os.Getenv(EnvSlackTitle),
-						Value: envOr(EnvSlackMessage, "EOM"),
-						Short: true,
-					},
 					{
 						Title: "Workflow",
 						Value: os.Getenv("GITHUB_WORKFLOW"),
 						Short: true,
+					},
+					{
+						Title: "Action",
+						Value: os.Getenv("GITHUB_ACTION"),
+						Short: true
+					}, 
+					 {
+						Title: "Ref",
+						Value: os.Getenv("GITHUB_REF"),
+						Short: true
+					},                {
+						Title: "Event",
+						Value: os.Getenv("GITHUB_EVENT_NAME"),
+						Short: true
+					},
+					 {
+						Title: "Repo Action URL",
+						Value: "https://github.com/${GITHUB_REPOSITORY}/actions",
+						Short: false
+					}
+					{
+						Title: os.Getenv(EnvSlackTitle),
+						Value: envOr(EnvSlackMessage, "EOM"),
+						Short: false,
 					},
 				},
 			},
