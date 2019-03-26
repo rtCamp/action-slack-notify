@@ -4,6 +4,7 @@ export GITHUB_BRANCH=${GITHUB_REF##*heads/}
 export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}
 export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
 export CI_SCRIPT_OPTIONS="ci_script_options"
+export SLACK_TITLE=${SLACK_TITLE:-"Message"}
 
 hosts_file="$GITHUB_WORKSPACE/.github/hosts.yml"
 
@@ -41,8 +42,8 @@ fi
 
 export SLACK_MESSAGE=${SLACK_MESSAGE:-$TEMPLATE_SLACK_MESSAGE}
 
-if [[ -z SLACK_MESSAGE ]]; then
-	export SLACK_MESSAGE='Success!'
+if [[ -z "$SLACK_MESSAGE" ]]; then
+	export SLACK_MESSAGE='Success :tada:'
 fi
 
 slack-notify "$@"
