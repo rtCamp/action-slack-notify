@@ -16,6 +16,7 @@ const (
 	EnvSlackMessage  = "SLACK_MESSAGE"
 	EnvSlackColor    = "SLACK_COLOR"
 	EnvSlackUserName = "SLACK_USERNAME"
+	EnvGithubActor   = "GITHUB_ACTOR"
 )
 
 type Webhook struct {
@@ -59,12 +60,19 @@ func main() {
 		Channel:  os.Getenv(EnvSlackChannel),
 		Attachments: []Attachment{
 			{
-				Fallback: envOr(EnvSlackMessage, "This space intentionally left blank"),
-				Color:    os.Getenv(EnvSlackColor),
+				Fallback: envOr(EnvSlackMessage, "GITHUB_ACTION=${GITHUB_ACTION} \n GITHUB_ACTOR=${GITHUB_ACTOR} \n GITHUB_EVENT_NAME=${GITHUB_EVENT_NAME} \n GITHUB_REF=${GITHUB_REF} \n GITHUB_REPOSITORY=${GITHUB_REPOSITORY} \n GITHUB_WORKFLOW=${GITHUB_WORKFLOW}"),
+				Color:    envOr(EnvSlackColor, "good"),
+				author_name: envOr(EnvGithubActor, ""),
 				Fields: []Field{
 					{
 						Title: os.Getenv(EnvSlackTitle),
 						Value: envOr(EnvSlackMessage, "EOM"),
+						Short: true
+					},
+					{
+						Title: "Workflow",
+						Value: os.Getenv("GITHUB_WORKFLOW"),
+						Short: true
 					},
 				},
 			},

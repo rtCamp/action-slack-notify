@@ -41,4 +41,8 @@ fi
 
 export SLACK_MESSAGE=${SLACK_MESSAGE:-$TEMPLATE_SLACK_MESSAGE}
 
+if [[ -z SLACK_MESSAGE ]]; then
+	export SLACK_MESSAGE='Success!'
+fi
+
 slack-notify "$@"
