@@ -31,7 +31,7 @@ if [[ -f "$hosts_file" ]]; then
 	export HOST_NAME=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
 	export DEPLOY_PATH=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")
 
-	temp_url=${deploy_path%%/app*}
+	temp_url=${DEPLOY_PATH%%/app*}
 	export SITE_NAME="${temp_url##*sites/}"
 
 	if [[ -n "$SITE_NAME" ]]; then
