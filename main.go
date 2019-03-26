@@ -30,10 +30,12 @@ type Webhook struct {
 }
 
 type Attachment struct {
-	Fallback string  `json:"fallback"`
-	Pretext  string  `json:"pretext,omitempty"`
-	Color    string  `json:"color,omitempty"`
-	Fields   []Field `json:"fields,omitempty"`
+	Fallback   string  `json:"fallback"`
+	Pretext    string  `json:"pretext,omitempty"`
+	Color      string  `json:"color,omitempty"`
+	AuthorName string  `json:"author_name,omitempty"`
+	Fields     []Field `json:"fields,omitempty"`
+	
 }
 
 type Field struct {
@@ -62,7 +64,7 @@ func main() {
 			{
 				Fallback: envOr(EnvSlackMessage, "GITHUB_ACTION=${GITHUB_ACTION} \n GITHUB_ACTOR=${GITHUB_ACTOR} \n GITHUB_EVENT_NAME=${GITHUB_EVENT_NAME} \n GITHUB_REF=${GITHUB_REF} \n GITHUB_REPOSITORY=${GITHUB_REPOSITORY} \n GITHUB_WORKFLOW=${GITHUB_WORKFLOW}"),
 				Color:    envOr(EnvSlackColor, "good"),
-				author_name: envOr(EnvGithubActor, ""),
+				AuthorName: envOr(EnvGithubActor, ""),
 				Fields: []Field{
 					{
 						Title: os.Getenv(EnvSlackTitle),
