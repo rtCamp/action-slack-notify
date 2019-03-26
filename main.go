@@ -36,6 +36,8 @@ type Attachment struct {
 	AuthorName string  `json:"author_name,omitempty"`
 	AuthorLink string  `json:"author_link,omitempty"`
 	AuthorIcon string  `json:"author_icon,omitempty"`
+	Footer     string  `json:"footer,omitempty"`
+	FooterIcon string  `json:"footer_icon,omitempty"`
 	Fields     []Field `json:"fields,omitempty"`
 	
 }
@@ -68,7 +70,9 @@ func main() {
 				Color:      envOr(EnvSlackColor, "good"),
 				AuthorName: envOr(EnvGithubActor, ""),
 				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
-            	AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
+				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
+				Footer: "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>",
+				FooterIcon: "https://rtcamp.com/wp-content/uploads/2018/04/rtcamp-favicon.png",
 				Fields: []Field{
 					{
 						Title: "Workflow",
