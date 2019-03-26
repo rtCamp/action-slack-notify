@@ -78,16 +78,16 @@ func main() {
 				FooterIcon: "https://rtcamp.com/wp-content/uploads/2018/04/rtcamp-favicon.png",
 				Fields: []Field{
 					{
-						Title: "Workflow",
-						Value: os.Getenv("GITHUB_WORKFLOW"),
+						Title: os.Getenv("SITE_TITLE"),
+						Value: os.Getenv(EnvSiteName),
 						Short: true,
 					},
 					{
-						Title: "Action",
-						Value: os.Getenv("GITHUB_ACTION"),
+						Title: os.Getenv("HOST_TITLE"),
+						Value: os.Getenv(EnvHostName),
 						Short: true,
-					}, 
-					 {
+					},
+					{
 						Title: "Ref",
 						Value: os.Getenv("GITHUB_REF"),
 						Short: true,
@@ -105,16 +105,6 @@ func main() {
 						Title: os.Getenv(EnvSlackTitle),
 						Value: envOr(EnvSlackMessage, "EOM"),
 						Short: false,
-					},
-					{
-						Title: os.Getenv("SITE_TITLE"),
-						Value: os.Getenv(EnvSiteName),
-						Short: true,
-					},
-					{
-						Title: os.Getenv("HOST_TITLE"),
-						Value: os.Getenv(EnvHostName),
-						Short: true,
 					},
 				},
 			},
