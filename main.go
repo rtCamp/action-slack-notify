@@ -17,6 +17,9 @@ const (
 	EnvSlackColor    = "SLACK_COLOR"
 	EnvSlackUserName = "SLACK_USERNAME"
 	EnvGithubActor   = "GITHUB_ACTOR"
+	EnvSiteName      = "SITE_NAME"
+	EnvHostName      = "HOST_NAME"
+	EnvDepolyPath    = "DEPLOY_PATH"
 )
 
 type Webhook struct {
@@ -60,13 +63,24 @@ func main() {
 		os.Exit(1)
 	}
 
+	siteName   := os.Getenv(EnvSiteName)
+	hostName   := os.Getenv(EnvHostName)
+	deployPath := os.Getenv(EnvDepolyPath)
+
+	if siteTitle  := "Site"; siteName == "" {
+		siteTitle := ""
+	}
+	if hostTitle  := "Server"; hostName == "" {
+		hostTitle := ""
+	}
+
 	msg := Webhook{
 		UserName: os.Getenv(EnvSlackUserName),
 		IconURL:  os.Getenv(EnvSlackIcon),
 		Channel:  os.Getenv(EnvSlackChannel),
 		Attachments: []Attachment{
 			{
-				Fallback: envOr(EnvSlackMessage, "GITHUB_ACTION=" + os.Getenv("GITHUB_ACTION") + " \n GITHUB_ACTOR=" + os.Getenv("GITHUB_ACTOR") + " \n GITHUB_EVENT_NAME=" + os.Getenv("GITHUB_EVENT_NAME") + " \n GITHUB_REF=" + os.Getenv("GITHUB_REF") + " \n GITHUB_REPOSITORY=" + os.Getenv("GITHUB_REPOSITORY") + " \n GITHUB_WORKFLOW=" + os.Getenv("GITHUB_WORKFLOW"),
+				Fallback: envOr(EnvSlackMessage, "GITHUB_ACTION=" + os.Getenv("GITHUB_ACTION") + " \n GITHUB_ACTOR=" + os.Getenv("GITHUB_ACTOR") + " \n GITHUB_EVENT_NAME=" + os.Getenv("GITHUB_EVENT_NAME") + " \n GITHUB_REF=" + os.Getenv("GITHUB_REF") + " \n GITHUB_REPOSITORY=" + os.Getenv("GITHUB_REPOSITORY") + " \n GITHUB_WORKFLOW=" + os.Getenv("GITHUB_WORKFLOW")),
 				Color:      envOr(EnvSlackColor, "good"),
 				AuthorName: envOr(EnvGithubActor, ""),
 				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
@@ -91,6 +105,16 @@ func main() {
 					},                {
 						Title: "Event",
 						Value: os.Getenv("GITHUB_EVENT_NAME"),
+						Short: true,
+					},
+					{
+						Title: siteTitle,
+						Value: envOr(EnvSiteName, deployPath),
+						Short: true,
+					},
+					{
+						Title: hostTitle,
+						Value: envOr(EnvHostName, "EOM"),
 						Short: true,
 					},
 					{

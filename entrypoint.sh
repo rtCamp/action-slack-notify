@@ -27,11 +27,11 @@ if [[ -n "$VAULT_GITHUB_TOKEN" ]] || [[ -n "$VAULT_TOKEN" ]]; then
 fi
 
 if [[ -f "$hosts_file" ]]; then
-	hostname=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
-	deploy_path=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")
+	export HOST_NAME=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
+	export DEPLOY_PATH=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")
 
 	temp_url=${deploy_path%%/app*}
-	site="${temp_url##*sites/}"
+	export SITE_NAME="${temp_url##*sites/}"
 
 	if [[ -n "$site" ]]; then
 		export TEMPLATE_SLACK_MESSAGE="Deployed successfully on site: \`$site\` for branch \`$GITHUB_BRANCH\` :tada: on server: \`$hostname\` :rocket:"
