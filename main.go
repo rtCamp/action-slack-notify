@@ -62,6 +62,45 @@ func main() {
 		os.Exit(1)
 	}
 
+	fields:= []Field{
+		{
+			Title: "Ref",
+			Value: os.Getenv("GITHUB_REF"),
+			Short: true,
+		},                {
+			Title: "Event",
+			Value: os.Getenv("GITHUB_EVENT_NAME"),
+			Short: true,
+		},
+		{
+			Title: "Repo Action URL",
+			Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/actions",
+			Short: false,
+		},
+		{
+			Title: os.Getenv(EnvSlackTitle),
+			Value: envOr(EnvSlackMessage, "EOM"),
+			Short: false,
+		},
+	}
+
+	hostName := os.Getenv(EnvHostName)
+	if hostName != "" {
+		newfields:= []Field{
+			{
+				Title: os.Getenv("SITE_TITLE"),
+				Value: os.Getenv(EnvSiteName),
+				Short: true,
+			},
+			{
+				Title: os.Getenv("HOST_TITLE"),
+				Value: os.Getenv(EnvHostName),
+				Short: true,
+			},
+		}
+		fields = append(newfields, fields...)
+	}
+
 	msg := Webhook{
 		UserName: os.Getenv(EnvSlackUserName),
 		IconURL:  os.Getenv(EnvSlackIcon),
@@ -74,37 +113,7 @@ func main() {
 				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
 				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
 				Footer: "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>",
-				Fields: []Field{
-					{
-						Title: os.Getenv("SITE_TITLE"),
-						Value: os.Getenv(EnvSiteName),
-						Short: true,
-					},
-					{
-						Title: os.Getenv("HOST_TITLE"),
-						Value: os.Getenv(EnvHostName),
-						Short: true,
-					},
-					{
-						Title: "Ref",
-						Value: os.Getenv("GITHUB_REF"),
-						Short: true,
-					},                {
-						Title: "Event",
-						Value: os.Getenv("GITHUB_EVENT_NAME"),
-						Short: true,
-					},
-					{
-						Title: "Repo Action URL",
-						Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/actions",
-						Short: false,
-					},
-					{
-						Title: os.Getenv(EnvSlackTitle),
-						Value: envOr(EnvSlackMessage, "EOM"),
-						Short: false,
-					},
-				},
+				Fields: fields,
 			},
 		},
 	}
