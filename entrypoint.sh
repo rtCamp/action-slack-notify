@@ -5,6 +5,7 @@ export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/437421
 export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
 export CI_SCRIPT_OPTIONS="ci_script_options"
 export SLACK_TITLE=${SLACK_TITLE:-"Message"}
+export COMMIT_MESSAGE=$(cat "/github/workflow/event.json" | jq .commits | jq '.[0].message' -r)
 
 hosts_file="$GITHUB_WORKSPACE/.github/hosts.yml"
 
@@ -42,7 +43,7 @@ if [[ -f "$hosts_file" ]]; then
 fi
 
 if [[ -z "$SLACK_MESSAGE" ]]; then
-	export SLACK_MESSAGE='Success :tada:'
+	export SLACK_MESSAGE="$COMMIT_MESSAGE"
 fi
 
 slack-notify "$@"
