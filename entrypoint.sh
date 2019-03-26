@@ -30,7 +30,7 @@ fi
 if [[ -f "$hosts_file" ]]; then
 	hostname=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
 	user=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.user")
-	export HOST_NAME="\`ssh $user@$hostname\`"
+	export HOST_NAME="\`$user@$hostname\`"
 	export DEPLOY_PATH=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")
 
 	temp_url=${DEPLOY_PATH%%/app*}
