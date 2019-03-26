@@ -16,6 +16,10 @@ const (
 	EnvSlackMessage  = "SLACK_MESSAGE"
 	EnvSlackColor    = "SLACK_COLOR"
 	EnvSlackUserName = "SLACK_USERNAME"
+	EnvGithubActor   = "GITHUB_ACTOR"
+	EnvSiteName      = "SITE_NAME"
+	EnvHostName      = "HOST_NAME"
+	EnvDepolyPath    = "DEPLOY_PATH"
 )
 
 type Webhook struct {
@@ -29,16 +33,21 @@ type Webhook struct {
 }
 
 type Attachment struct {
-	Fallback string  `json:"fallback"`
-	Pretext  string  `json:"pretext,omitempty"`
-	Color    string  `json:"color,omitempty"`
-	Fields   []Field `json:"fields,omitempty"`
+	Fallback   string  `json:"fallback"`
+	Pretext    string  `json:"pretext,omitempty"`
+	Color      string  `json:"color,omitempty"`
+	AuthorName string  `json:"author_name,omitempty"`
+	AuthorLink string  `json:"author_link,omitempty"`
+	AuthorIcon string  `json:"author_icon,omitempty"`
+	Footer     string  `json:"footer,omitempty"`
+	Fields     []Field `json:"fields,omitempty"`
+	
 }
 
 type Field struct {
-	Title string `json:"title"`
+	Title string `json:"title,omitempty"`
 	Value string `json:"value,omitempty"`
-	Short bool   `json:"short"`
+	Short bool   `json:"short,omitempty"`
 }
 
 func main() {
@@ -53,20 +62,58 @@ func main() {
 		os.Exit(1)
 	}
 
+	fields:= []Field{
+		{
+			Title: "Ref",
+			Value: os.Getenv("GITHUB_REF"),
+			Short: true,
+		},                {
+			Title: "Event",
+			Value: os.Getenv("GITHUB_EVENT_NAME"),
+			Short: true,
+		},
+		{
+			Title: "Repo Action URL",
+			Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/actions",
+			Short: false,
+		},
+		{
+			Title: os.Getenv(EnvSlackTitle),
+			Value: envOr(EnvSlackMessage, "EOM"),
+			Short: false,
+		},
+	}
+
+	hostName := os.Getenv(EnvHostName)
+	if hostName != "" {
+		newfields:= []Field{
+			{
+				Title: os.Getenv("SITE_TITLE"),
+				Value: os.Getenv(EnvSiteName),
+				Short: true,
+			},
+			{
+				Title: os.Getenv("HOST_TITLE"),
+				Value: os.Getenv(EnvHostName),
+				Short: true,
+			},
+		}
+		fields = append(newfields, fields...)
+	}
+
 	msg := Webhook{
 		UserName: os.Getenv(EnvSlackUserName),
 		IconURL:  os.Getenv(EnvSlackIcon),
 		Channel:  os.Getenv(EnvSlackChannel),
 		Attachments: []Attachment{
 			{
-				Fallback: envOr(EnvSlackMessage, "This space intentionally left blank"),
-				Color:    os.Getenv(EnvSlackColor),
-				Fields: []Field{
-					{
-						Title: os.Getenv(EnvSlackTitle),
-						Value: envOr(EnvSlackMessage, "EOM"),
-					},
-				},
+				Fallback: envOr(EnvSlackMessage, "GITHUB_ACTION=" + os.Getenv("GITHUB_ACTION") + " \n GITHUB_ACTOR=" + os.Getenv("GITHUB_ACTOR") + " \n GITHUB_EVENT_NAME=" + os.Getenv("GITHUB_EVENT_NAME") + " \n GITHUB_REF=" + os.Getenv("GITHUB_REF") + " \n GITHUB_REPOSITORY=" + os.Getenv("GITHUB_REPOSITORY") + " \n GITHUB_WORKFLOW=" + os.Getenv("GITHUB_WORKFLOW")),
+				Color:      envOr(EnvSlackColor, "good"),
+				AuthorName: envOr(EnvGithubActor, ""),
+				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
+				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
+				Footer: "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>",
+				Fields: fields,
 			},
 		},
 	}

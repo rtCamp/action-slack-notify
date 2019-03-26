@@ -26,6 +26,7 @@ RUN apk update \
 	&& apk upgrade \
 	&& apk add \
 	bash \
+	jq \
 	ca-certificates \
 	python \
 	py2-pip && \
