@@ -28,7 +28,9 @@ if [[ -n "$VAULT_GITHUB_TOKEN" ]] || [[ -n "$VAULT_TOKEN" ]]; then
 fi
 
 if [[ -f "$hosts_file" ]]; then
-	export HOST_NAME=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
+	hostname=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
+	user=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.user")
+	export HOST_NAME="\`ssh $user@$hostname\`"
 	export DEPLOY_PATH=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")
 
 	temp_url=${DEPLOY_PATH%%/app*}
@@ -38,7 +40,7 @@ if [[ -f "$hosts_file" ]]; then
 		export SITE_TITLE="Site"
 	fi
 	if [[ -n "$HOST_NAME" ]]; then
-		export HOST_TITLE="Server"
+		export HOST_TITLE="SSH Host"
 	fi
 fi
 
