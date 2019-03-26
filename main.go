@@ -78,22 +78,22 @@ func main() {
 					{
 						Title: "Action",
 						Value: os.Getenv("GITHUB_ACTION"),
-						Short: true
+						Short: true,
 					}, 
 					 {
 						Title: "Ref",
 						Value: os.Getenv("GITHUB_REF"),
-						Short: true
+						Short: true,
 					},                {
 						Title: "Event",
 						Value: os.Getenv("GITHUB_EVENT_NAME"),
-						Short: true
+						Short: true,
 					},
-					 {
+					{
 						Title: "Repo Action URL",
-						Value: "https://github.com/${GITHUB_REPOSITORY}/actions",
-						Short: false
-					}
+						Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/actions",
+						Short: false,
+					},
 					{
 						Title: os.Getenv(EnvSlackTitle),
 						Value: envOr(EnvSlackMessage, "EOM"),
