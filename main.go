@@ -67,12 +67,12 @@ func main() {
 					{
 						Title: os.Getenv(EnvSlackTitle),
 						Value: envOr(EnvSlackMessage, "EOM"),
-						Short: true
+						Short: true,
 					},
 					{
 						Title: "Workflow",
 						Value: os.Getenv("GITHUB_WORKFLOW"),
-						Short: true
+						Short: true,
 					},
 				},
 			},
