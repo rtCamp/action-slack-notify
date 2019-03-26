@@ -46,9 +46,9 @@ type Attachment struct {
 }
 
 type Field struct {
-	Title string `json:"title"`
+	Title string `json:"title,omitempty"`
 	Value string `json:"value,omitempty"`
-	Short bool   `json:"short"`
+	Short bool   `json:"short,omitempty"`
 }
 
 func main() {
@@ -61,17 +61,6 @@ func main() {
 	if text == "" {
 		fmt.Fprintln(os.Stderr, "Message is required")
 		os.Exit(1)
-	}
-
-	siteName   := os.Getenv(EnvSiteName)
-	hostName   := os.Getenv(EnvHostName)
-	deployPath := os.Getenv(EnvDepolyPath)
-
-	if siteTitle  := "Site"; siteName == "" {
-		siteTitle := ""
-	}
-	if hostTitle  := "Server"; hostName == "" {
-		hostTitle := ""
 	}
 
 	msg := Webhook{
@@ -108,13 +97,13 @@ func main() {
 						Short: true,
 					},
 					{
-						Title: siteTitle,
-						Value: envOr(EnvSiteName, deployPath),
+						Title: os.Getenv("SITE_TITLE"),
+						Value: os.Getenv(EnvSiteName),
 						Short: true,
 					},
 					{
-						Title: hostTitle,
-						Value: envOr(EnvHostName, "EOM"),
+						Title: os.Getenv("HOST_TITLE"),
+						Value: os.Getenv(EnvHostName),
 						Short: true,
 					},
 					{
