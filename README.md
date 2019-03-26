@@ -10,6 +10,8 @@ A [GitHub Action](https://github.com/features/actions) to send a message to a Sl
 
 <img width="485" alt="action-slack-notify-rtcamp" src="https://user-images.githubusercontent.com/4115/54996943-9d38c700-4ff0-11e9-9d35-7e2c16ef0d62.png">
 
+The `Site` and `SSH Host` details are only available if this action is run after [Deploy WordPress GitHub action](https://github.com/rtCamp/action-deploy-wordpress).
+
 ## Usage
 
 You can use this action after any other action. Here is an example setup of this action:
@@ -45,14 +47,9 @@ SLACK_COLOR    | `good` (green)                                        | You can
 SLACK_MESSAGE  | Generated from git commit message.                    | The main Slack message in attachment. It is advised not to override this.
 SLACK_TITLE    | Message                                               | Title to use before main Slack message
 
-You can see actions with all variables as below:
+You can see the action block with all variables as below:
 
 ```bash
-workflow "Slack Notification Demo" {
-  resolves = ["Slack Notification"]
-  on = "push"
-}
-
 action "Slack Notification" {
   uses = "rtCamp/action-slack-notify@master"
   env = {
@@ -66,6 +63,12 @@ action "Slack Notification" {
   secrets = ["SLACK_WEBHOOK"]
 }
 ```
+
+Below screenshot help you visualize message part controlled by different variables:
+
+<img width="600" alt="Screenshot_2019-03-26_at_5_56_05_PM" src="https://user-images.githubusercontent.com/4115/54997488-d1f94e00-4ff1-11e9-897f-a35ab90f525f.png">
+
+The `Site` and `SSH Host` details are only available if this action is run after [Deploy WordPress GitHub action](https://github.com/rtCamp/action-deploy-wordpress).
 
 ## Hashicorp Vault (Optional)
 
