@@ -42,8 +42,8 @@ RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VER
 # fix the missing dependency - https://stackoverflow.com/a/35613430
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 
-COPY entrypoint.sh /
+COPY *.sh /
 
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /*.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
