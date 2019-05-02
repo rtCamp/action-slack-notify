@@ -35,14 +35,21 @@ if [[ -f "$hosts_file" ]]; then
 
 	temp_url=${DEPLOY_PATH%%/app*}
 	export SITE_NAME="${temp_url##*sites/}"
-
-	if [[ -n "$SITE_NAME" ]]; then
-		export SITE_TITLE="Site"
-	fi
-	if [[ -n "$HOST_NAME" ]]; then
-		export HOST_TITLE="SSH Host"
-	fi
+    export HOST_TITLE="SSH Host"
 fi
+
+k8s_site_hostname="$GITHUB_WORKSPACE/.github/kubernetes/hostname.txt"
+
+if [[ -f "$k8s_site_hostname" ]]; then
+    export SITE_NAME="$(cat $k8s_site_hostname)"
+    export HOST_NAME="\`$CLUSTER_NAME\`"
+    export HOST_TITLE="Cluster"
+fi
+
+if [[ -n "$SITE_NAME" ]]; then
+    export SITE_TITLE="Site"
+fi
+
 
 if [[ -z "$SLACK_MESSAGE" ]]; then
 	export SLACK_MESSAGE="$COMMIT_MESSAGE"
