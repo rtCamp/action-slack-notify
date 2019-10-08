@@ -16,19 +16,22 @@ The `Site` and `SSH Host` details are only available if this action is run after
 
 You can use this action after any other action. Here is an example setup of this action:
 
-1. Create a `.github/main.workflow` in your GitHub repo, if one doesn't exist already.
-2. Add the following code to the `main.workflow` file.
+1. Create a `.github/workflows/slack-notify.yml` file in your GitHub repo.
+2. Add the following code to the `slack-notify.yml` file.
 
-```bash
-workflow "Slack Notification Demo" {
-  resolves = ["Slack Notification"]
-  on = "push"
-}
-
-action "Slack Notification" {
-  uses = "rtCamp/action-slack-notify@master"
-  secrets = ["SLACK_WEBHOOK"]
-}
+```yml
+on: push
+name: Slack Notification Demo
+jobs:
+  slackNotification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@master
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
 3. Create `SLACK_WEBHOOK` secret using [GitHub Action's Secret](https://developer.github.com/actions/creating-workflows/storing-secrets). You can [generate a Slack incoming webhook token from here](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks).
@@ -49,19 +52,17 @@ SLACK_TITLE    | Message                                               | Title t
 
 You can see the action block with all variables as below:
 
-```bash
-action "Slack Notification" {
-  uses = "rtCamp/action-slack-notify@master"
-  env = {
-    SLACK_CHANNEL = "general",
-    SLACK_USERNAME = "rtCamp",
-    SLACK_ICON  = "https://github.com/rtCamp.png?size=48",
-    SLACK_COLOR = "#3278BD"
-    SLACK_TITLE = "Post Title",
-    SLACK_MESSAGE = "Post Content :rocket:"
-  }
-  secrets = ["SLACK_WEBHOOK"]
-}
+```yml
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@master
+      env:
+        SLACK_CHANNEL: general
+        SLACK_COLOR: '#3278BD'
+        SLACK_ICON: https://github.com/rtCamp.png?size=48
+        SLACK_MESSAGE: 'Post Content :rocket:'
+        SLACK_TITLE: Post Title
+        SLACK_USERNAME: rtCamp
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
 Below screenshot help you visualize message part controlled by different variables:
@@ -81,18 +82,22 @@ Variable      | Purpose                                                         
 `VAULT_ADDR`  | [Vault server address](https://www.vaultproject.io/docs/commands/#vault_addr) | `https://example.com:8200`
 `VAULT_TOKEN` | [Vault token](https://www.vaultproject.io/docs/concepts/tokens.html)          | `s.gIX5MKov9TUp7iiIqhrP1HgN`
 
-You will need to change `secrets` line in `main.workflow` file to look like below.
+You will need to change `secrets` line in `slack-notify.yml` file to look like below.
 
-```bash
-workflow "Slack Notification Demo" {
-  resolves = ["Slack Notification"]
-  on = "push"
-}
-
-action "Slack Notification" {
-  uses = "rtCamp/action-slack-notify@master"
-  secrets = ["VAULT_ADDR", "VAULT_TOKEN"]
-}
+```yml
+on: push
+name: Slack Notification Demo
+jobs:
+  slackNotification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@master
+      env:
+        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
 ```
 
 GitHub action uses `VAULT_TOKEN` to connect to `VAULT_ADDR` to retrieve slack webhook from Vault.
