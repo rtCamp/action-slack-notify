@@ -10,7 +10,9 @@ export COMMIT_MESSAGE=$(cat "/github/workflow/event.json" | jq .commits | jq '.[
 hosts_file="$GITHUB_WORKSPACE/.github/hosts.yml"
 
 if [[ -z "$SLACK_CHANNEL" ]]; then
-	user_slack_channel=$(cat "$hosts_file" | shyaml get-value "$CI_SCRIPT_OPTIONS.slack-channel" | tr '[:upper:]' '[:lower:]')
+	if [[ -f "$hosts_file" ]]; then
+		user_slack_channel=$(cat "$hosts_file" | shyaml get-value "$CI_SCRIPT_OPTIONS.slack-channel" | tr '[:upper:]' '[:lower:]')
+	fi
 fi
 
 if [[ -n "$user_slack_channel" ]]; then
