@@ -73,8 +73,8 @@ func main() {
 			Short: true,
 		},
 		{
-			Title: "Repo Action URL",
-			Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/actions",
+			Title: "Actions URL",
+			Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
 			Short: false,
 		},
 		{
