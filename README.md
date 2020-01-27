@@ -54,7 +54,7 @@ You can see the action block with all variables as below:
 
 ```yml
     - name: Slack Notification
-      uses: rtCamp/action-slack-notify@master
+      uses: rtCamp/action-slack-notify@v2.0.0
       env:
         SLACK_CHANNEL: general
         SLACK_COLOR: '#3278BD'
@@ -92,9 +92,9 @@ jobs:
     name: Slack Notification
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: Slack Notification
-      uses: rtCamp/action-slack-notify@master
+      uses: rtCamp/action-slack-notify@v2.0.0
       env:
         VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
         VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
