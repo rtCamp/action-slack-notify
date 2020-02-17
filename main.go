@@ -11,6 +11,7 @@ import (
 const (
 	EnvSlackWebhook  = "SLACK_WEBHOOK"
 	EnvSlackIcon     = "SLACK_ICON"
+	EnvSlackIconEmoji = "SLACK_ICON_EMOJI"
 	EnvSlackChannel  = "SLACK_CHANNEL"
 	EnvSlackTitle    = "SLACK_TITLE"
 	EnvSlackMessage  = "SLACK_MESSAGE"
@@ -104,6 +105,7 @@ func main() {
 	msg := Webhook{
 		UserName: os.Getenv(EnvSlackUserName),
 		IconURL:  os.Getenv(EnvSlackIcon),
+		IconEmoji: os.Getenv(EnvSlackIconEmoji),
 		Channel:  os.Getenv(EnvSlackChannel),
 		Attachments: []Attachment{
 			{
