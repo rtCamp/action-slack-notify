@@ -9,18 +9,18 @@ import (
 )
 
 const (
-	EnvSlackWebhook  = "SLACK_WEBHOOK"
-	EnvSlackIcon     = "SLACK_ICON"
+	EnvSlackWebhook   = "SLACK_WEBHOOK"
+	EnvSlackIcon      = "SLACK_ICON"
 	EnvSlackIconEmoji = "SLACK_ICON_EMOJI"
-	EnvSlackChannel  = "SLACK_CHANNEL"
-	EnvSlackTitle    = "SLACK_TITLE"
-	EnvSlackMessage  = "SLACK_MESSAGE"
-	EnvSlackColor    = "SLACK_COLOR"
-	EnvSlackUserName = "SLACK_USERNAME"
-	EnvGithubActor   = "GITHUB_ACTOR"
-	EnvSiteName      = "SITE_NAME"
-	EnvHostName      = "HOST_NAME"
-	EnvDepolyPath    = "DEPLOY_PATH"
+	EnvSlackChannel   = "SLACK_CHANNEL"
+	EnvSlackTitle     = "SLACK_TITLE"
+	EnvSlackMessage   = "SLACK_MESSAGE"
+	EnvSlackColor     = "SLACK_COLOR"
+	EnvSlackUserName  = "SLACK_USERNAME"
+	EnvGithubActor    = "GITHUB_ACTOR"
+	EnvSiteName       = "SITE_NAME"
+	EnvHostName       = "HOST_NAME"
+	EnvDepolyPath     = "DEPLOY_PATH"
 )
 
 type Webhook struct {
@@ -103,10 +103,10 @@ func main() {
 	}
 
 	msg := Webhook{
-		UserName: os.Getenv(EnvSlackUserName),
-		IconURL:  os.Getenv(EnvSlackIcon),
+		UserName:  os.Getenv(EnvSlackUserName),
+		IconURL:   os.Getenv(EnvSlackIcon),
 		IconEmoji: os.Getenv(EnvSlackIconEmoji),
-		Channel:  os.Getenv(EnvSlackChannel),
+		Channel:   os.Getenv(EnvSlackChannel),
 		Attachments: []Attachment{
 			{
 				Fallback: envOr(EnvSlackMessage, "GITHUB_ACTION=" + os.Getenv("GITHUB_ACTION") + " \n GITHUB_ACTOR=" + os.Getenv("GITHUB_ACTOR") + " \n GITHUB_EVENT_NAME=" + os.Getenv("GITHUB_EVENT_NAME") + " \n GITHUB_REF=" + os.Getenv("GITHUB_REF") + " \n GITHUB_REPOSITORY=" + os.Getenv("GITHUB_REPOSITORY") + " \n GITHUB_WORKFLOW=" + os.Getenv("GITHUB_WORKFLOW")),
