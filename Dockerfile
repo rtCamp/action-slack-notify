@@ -29,7 +29,8 @@ RUN apk update \
 	jq \
 	ca-certificates \
 	python \
-	py2-pip && \
+	py2-pip \
+	rsync && \
 	pip install shyaml && \
 	rm -rf /var/cache/apk/*
 
