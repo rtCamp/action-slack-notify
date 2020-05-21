@@ -5,7 +5,7 @@ export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/437421
 export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
 export CI_SCRIPT_OPTIONS="ci_script_options"
 export SLACK_TITLE=${SLACK_TITLE:-"Message"}
-export COMMIT_MESSAGE=$(cat "/github/workflow/event.json" | jq .commits | jq '.[0].message' -r)
+export COMMIT_MESSAGE=$(cat "$GITHUB_EVENT_PATH" | jq .commits | jq '.[0].message' -r)
 
 hosts_file="$GITHUB_WORKSPACE/.github/hosts.yml"
 
@@ -39,6 +39,9 @@ if [[ -f "$hosts_file" ]]; then
 	export SITE_NAME="${temp_url##*sites/}"
     export HOST_TITLE="SSH Host"
 fi
+
+PR_SHA=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
+[[ 'null' != $PR_SHA ]] && export GITHUB_SHA="$PR_SHA"
 
 k8s_site_hostname="$GITHUB_WORKSPACE/.github/kubernetes/hostname.txt"
 
