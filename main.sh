@@ -43,14 +43,6 @@ fi
 PR_SHA=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
 [[ 'null' != $PR_SHA ]] && export GITHUB_SHA="$PR_SHA"
 
-k8s_site_hostname="$GITHUB_WORKSPACE/.github/kubernetes/hostname.txt"
-
-if [[ -f "$k8s_site_hostname" ]]; then
-    export SITE_NAME="$(cat $k8s_site_hostname)"
-    export HOST_NAME="\`$CLUSTER_NAME\`"
-    export HOST_TITLE="Cluster"
-fi
-
 if [[ -n "$SITE_NAME" ]]; then
     export SITE_TITLE="Site"
 fi
