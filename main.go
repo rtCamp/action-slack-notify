@@ -21,6 +21,7 @@ const (
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
 	EnvDepolyPath     = "DEPLOY_PATH"
+	EnvMinimal        = "MSG_MINIMAL"
 )
 
 type Webhook struct {
@@ -63,26 +64,40 @@ func main() {
 		os.Exit(1)
 	}
 
-	fields:= []Field{
-		{
-			Title: "Ref",
-			Value: os.Getenv("GITHUB_REF"),
-			Short: true,
-		},                {
-			Title: "Event",
-			Value: os.Getenv("GITHUB_EVENT_NAME"),
-			Short: true,
-		},
-		{
-			Title: "Actions URL",
-			Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
-			Short: false,
-		},
-		{
-			Title: os.Getenv(EnvSlackTitle),
-			Value: envOr(EnvSlackMessage, "EOM"),
-			Short: false,
-		},
+	minimal := os.Getenv(EnvMinimal)
+	fields  := []Field{}
+	if minimal == "true" {
+		mainFields:= []Field{
+			{
+				Title: os.Getenv(EnvSlackTitle),
+				Value: envOr(EnvSlackMessage, "EOM"),
+				Short: false,
+			},
+		}
+		fields = append(mainFields, fields...)
+	} else {
+		mainFields:= []Field{
+			{
+				Title: "Ref",
+				Value: os.Getenv("GITHUB_REF"),
+				Short: true,
+			},                {
+				Title: "Event",
+				Value: os.Getenv("GITHUB_EVENT_NAME"),
+				Short: true,
+			},
+			{
+				Title: "Actions URL",
+				Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
+				Short: false,
+			},
+			{
+				Title: os.Getenv(EnvSlackTitle),
+				Value: envOr(EnvSlackMessage, "EOM"),
+				Short: false,
+			},
+		}
+		fields = append(mainFields, fields...)
 	}
 
 	hostName := os.Getenv(EnvHostName)
