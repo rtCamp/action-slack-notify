@@ -52,4 +52,9 @@ if [[ -z "$SLACK_MESSAGE" ]]; then
 	export SLACK_MESSAGE="$COMMIT_MESSAGE"
 fi
 
+FILE=message.txt
+if test -f "$FILE"; then
+    export SLACK_MESSAGE=`cat $FILE`
+fi
+
 slack-notify "$@"

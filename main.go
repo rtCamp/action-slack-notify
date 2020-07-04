@@ -18,6 +18,7 @@ const (
 	EnvSlackColor     = "SLACK_COLOR"
 	EnvSlackUserName  = "SLACK_USERNAME"
 	EnvGithubActor    = "GITHUB_ACTOR"
+	EnvFooter         = "FOOTER"
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
 	EnvDepolyPath     = "DEPLOY_PATH"
@@ -129,7 +130,7 @@ func main() {
 				AuthorName: envOr(EnvGithubActor, ""),
 				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
 				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
-				Footer: "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>",
+				Footer: envOr(EnvFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>"),
 				Fields: fields,
 			},
 		},
