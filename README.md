@@ -50,6 +50,7 @@ SLACK_ICON_EMOJI  | -                                                     | User
 SLACK_COLOR       | `good` (green)                                        | You can pass an RGB value like `#efefef` which would change color on left side vertical line of Slack message.
 SLACK_MESSAGE     | Generated from git commit message.                    | The main Slack message in attachment. It is advised not to override this.
 SLACK_TITLE       | Message                                               | Title to use before main Slack message.
+SLACK_FOOTER      | Powered By rtCamp's GitHub Actions Library            | Slack message footer.
 MSG_MINIMAL       | -                                                     | If set to true, removes: `Ref`, `Event` and `Actions URL` from the message.
 
 
