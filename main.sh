@@ -5,7 +5,7 @@ export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/437421
 export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
 export CI_SCRIPT_OPTIONS="ci_script_options"
 export SLACK_TITLE=${SLACK_TITLE:-"Message"}
-export COMMIT_MESSAGE=$(cat "$GITHUB_EVENT_PATH" | jq .commits | jq '.[0].message' -r)
+export COMMIT_MESSAGE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.commits[-1].message')
 
 hosts_file="$GITHUB_WORKSPACE/.github/hosts.yml"
 
