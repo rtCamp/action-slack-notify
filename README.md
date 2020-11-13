@@ -52,7 +52,7 @@ SLACK_COLOR       | `good` (green)                                        | You 
 SLACK_MESSAGE     | Generated from git commit message.                    | The main Slack message in attachment. It is advised not to override this.
 SLACK_TITLE       | Message                                               | Title to use before main Slack message.
 SLACK_FOOTER      | Powered By rtCamp's GitHub Actions Library            | Slack message footer.
-MSG_MINIMAL       | -                                                     | If set to true, removes: `Ref`, `Event` and `Actions URL` from the message.
+MSG_MINIMAL       | -                                                     | If set to true, removes: `Ref`, `Event` and `Actions URL` from the message. You can set comma separated values to customise message (ex : ref,event)
 
 
 You can see the action block with all variables as below:
