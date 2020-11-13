@@ -44,7 +44,8 @@ By default, action is designed to run with minimal configuration but you can alt
 Variable          | Default                                               | Purpose
 ------------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------
 SLACK_CHANNEL     | Set during Slack webhook creation                     | Specify Slack channel in which message needs to be sent
-SLACK_USERNAME    | `rtBot`                                               | The name of the sender of the message. Does not need to be a "real" username
+SLACK_USERNAME    | `rtBot`                                               | Custom Slack Username sending the message. Does not need to be a "real" username.
+SLACK_MSG_AUTHOR  | `$GITHUB_ACTOR` (The person who triggered action).    | GitHub username of the person who has triggered the action. In case you want to modify it, please specify corrent GitHub username.
 SLACK_ICON        | ![rtBot Avatar](https://github.com/rtBot.png?size=32) | User/Bot icon shown with Slack message. It uses the URL supplied to this env variable to display the icon in slack message.
 SLACK_ICON_EMOJI  | -                                                     | User/Bot icon shown with Slack message, in case you do not wish to add a URL for slack icon as above, you can set slack emoji in this env variable. Example value: `:bell:` or any other valid slack emoji.
 SLACK_COLOR       | `good` (green)                                        | You can pass an RGB value like `#efefef` which would change color on left side vertical line of Slack message.
