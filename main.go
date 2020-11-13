@@ -104,7 +104,7 @@ func main() {
 					},
 				}
 				mainFields = append(field, mainFields...)
-			case "url":
+			case "actions url":
 				field := []Field{
 					{
 						Title: "Actions URL",
