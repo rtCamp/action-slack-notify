@@ -1,0 +1,23 @@
+name: 'K8S Deployment'
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        default: ''
+        description: ''
+
+jobs:
+  Deployment:
+    name: 'Deployment'
+    runs-on: ubuntu-latest
+    steps:
+      
+      - uses: actions/checkout@v2
+      - name: Slack Notification
+        uses: ./
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: clouddrove.com
+          SLACK_ENV: prod
+

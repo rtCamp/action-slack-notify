@@ -16,6 +16,7 @@ const (
 	EnvSlackChannel   = "SLACK_CHANNEL"
 	EnvSlackTitle     = "SLACK_TITLE"
 	EnvSlackMessage   = "SLACK_MESSAGE"
+	EnvSlackEnv       = "SLACK_ENV"
 	EnvSlackColor     = "SLACK_COLOR"
 	EnvSlackUserName  = "SLACK_USERNAME"
 	EnvSlackFooter    = "SLACK_FOOTER"
@@ -43,6 +44,7 @@ type Attachment struct {
 	AuthorLink string  `json:"author_link,omitempty"`
 	AuthorIcon string  `json:"author_icon,omitempty"`
 	Footer     string  `json:"footer,omitempty"`
+	FooterIcon string  `json:"footer_icon,omitempty"`
 	Fields     []Field `json:"fields,omitempty"`
 }
 
@@ -89,7 +91,7 @@ func main() {
 			case "ref":
 				field := []Field{
 					{
-						Title: "Ref",
+						Title: "Branch",
 						Value: os.Getenv("GITHUB_REF"),
 						Short: true,
 					},
@@ -98,7 +100,7 @@ func main() {
 			case "event":
 				field := []Field{
 					{
-						Title: "Event",
+						Title: "Trigger_By",
 						Value: os.Getenv("GITHUB_EVENT_NAME"),
 						Short: true,
 					},
@@ -109,7 +111,7 @@ func main() {
 					{
 						Title: "Actions URL",
 						Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
-						Short: false,
+						Short: true,
 					},
 				}
 				mainFields = append(field, mainFields...)
@@ -119,22 +121,27 @@ func main() {
 	} else {
 		mainFields := []Field{
 			{
-				Title: "Ref",
-				Value: os.Getenv("GITHUB_REF"),
+				Title: "Branch",
+				Value: strings.Split(os.Getenv("GITHUB_REF"),"/")[2],
 				Short: true,
 			}, {
-				Title: "Event",
-				Value: os.Getenv("GITHUB_EVENT_NAME"),
+				Title: "Repo",
+				Value: os.Getenv("GITHUB_REPOSITORY"),
+				Short: true,
+			},
+			{
+				Title: "Environment",
+				Value: envOr(EnvSlackEnv, "EOM"),
+				Short: true,
+			},
+			{
+				Title: os.Getenv(EnvSlackTitle),
+				Value: envOr(EnvSlackMessage, "EOM"),
 				Short: true,
 			},
 			{
 				Title: "Actions URL",
 				Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
-				Short: false,
-			},
-			{
-				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
 				Short: false,
 			},
 		}
@@ -170,7 +177,8 @@ func main() {
 				AuthorName: envOr(EnvGithubActor, ""),
 				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
 				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
-				Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>"),
+				Footer:     "CloudDrove",
+				FooterIcon: "https://clouddrove.com/media/images/favicon.ico",
 				Fields:     fields,
 			},
 		},

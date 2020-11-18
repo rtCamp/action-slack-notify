@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-export GITHUB_BRANCH=${GITHUB_REF##*heads/}
+export GITHUB_BRANCH=${GITHUB_REF}
 export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}
-export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
+export SLACK_USERNAME=${SLACK_USERNAME:-"CloudDrove"}
 export CI_SCRIPT_OPTIONS="ci_script_options"
-export SLACK_TITLE=${SLACK_TITLE:-"Message"}
+export SLACK_TITLE=${SLACK_TITLE:-"URL"}
 export COMMIT_MESSAGE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.commits[-1].message')
 export GITHUB_ACTOR=${SLACK_MSG_AUTHOR:-"$GITHUB_ACTOR"}
 
@@ -51,6 +51,11 @@ fi
 
 if [[ -z "$SLACK_MESSAGE" ]]; then
 	export SLACK_MESSAGE="$COMMIT_MESSAGE"
+fi
+
+
+if [[ -z "$SLACK_ENV" ]]; then
+	export SLACK_ENV=""
 fi
 
 slack-notify "$@"

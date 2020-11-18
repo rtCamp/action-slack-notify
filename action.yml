@@ -1,9 +1,9 @@
-name: 'Slack Notify'
+name: 'CloudDrove Slack Notify'
 description: 'This action will send a notification to Slack'
-author: 'rtCamp'
+author: 'CloudDrove'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/rtcamp/action-slack-notify:v2.1.1'
+  image: 'docker://clouddrove/slack-notify:1.0'
 branding:
   icon: 'bell'
   color: 'yellow'
