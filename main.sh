@@ -53,4 +53,8 @@ if [[ -z "$SLACK_MESSAGE" ]]; then
 	export SLACK_MESSAGE="$COMMIT_MESSAGE"
 fi
 
+if [[ -n "$SLACK_ICON_EMOJI" ]]; then
+	export SLACK_ICON_EMOJI=${SLACK_ICON_EMOJI}
+fi
+
 slack-notify "$@"
