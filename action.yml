@@ -3,7 +3,7 @@ description: 'This action will send a notification to Slack'
 author: 'CloudDrove'
 runs:
   using: 'docker'
-  image: 'docker://clouddrove/slack-notify:1.0'
+  image: 'docker://clouddrove/slack-notify:1.2'
 branding:
   icon: 'bell'
   color: 'yellow'
