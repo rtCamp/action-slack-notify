@@ -51,6 +51,8 @@ fi
 
 if [[ -z "$SLACK_MESSAGE" ]]; then
 	export SLACK_MESSAGE="$COMMIT_MESSAGE"
+else
+	export SLACK_MESSAGE=${SLACK_MESSAGE}
 fi
 
 if [[ -n "$SLACK_ICON_EMOJI" ]]; then
