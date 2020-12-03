@@ -63,6 +63,9 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Message is required")
 		os.Exit(1)
 	}
+	if strings.HasPrefix(os.Getenv("GITHUB_WORKFLOW"), ".github") {
+		os.Setenv("GITHUB_WORKFLOW", "Link to action run")
+	}
 
 	minimal := os.Getenv(EnvMinimal)
 	fields := []Field{}
@@ -108,7 +111,7 @@ func main() {
 				field := []Field{
 					{
 						Title: "Actions URL",
-						Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
+						Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
 						Short: false,
 					},
 				}
@@ -129,7 +132,7 @@ func main() {
 			},
 			{
 				Title: "Actions URL",
-				Value: "https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks",
+				Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
 				Short: false,
 			},
 			{
