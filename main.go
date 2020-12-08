@@ -67,6 +67,9 @@ func main() {
 		os.Setenv("GITHUB_WORKFLOW", "Link to action run")
 	}
 
+	long_sha := os.Getenv("GITHUB_SHA")
+	commit_sha := long_sha[0:6]
+
 	minimal := os.Getenv(EnvMinimal)
 	fields := []Field{}
 	if minimal == "true" {
@@ -112,7 +115,16 @@ func main() {
 					{
 						Title: "Actions URL",
 						Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
-						Short: false,
+						Short: true,
+					},
+				}
+				mainFields = append(field, mainFields...)
+			case "commit":
+				field := []Field{
+					{
+						Title: "Commit",
+						Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
+						Short: true,
 					},
 				}
 				mainFields = append(field, mainFields...)
@@ -133,7 +145,12 @@ func main() {
 			{
 				Title: "Actions URL",
 				Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
-				Short: false,
+				Short: true,
+			},
+			{
+				Title: "Commit",
+				Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
+				Short: true,
 			},
 			{
 				Title: os.Getenv(EnvSlackTitle),
