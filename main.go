@@ -90,7 +90,7 @@ func main() {
 				Short: false,
 			},
 		}
-		for _,requiredField := range requiredFields {
+		for _, requiredField := range requiredFields {
 			switch strings.ToLower(requiredField) {
 			case "ref":
 				field := []Field{
