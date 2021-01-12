@@ -178,6 +178,18 @@ func main() {
 		fields = append(newfields, fields...)
 	}
 
+	color := ""
+	switch os.Getenv(EnvSlackColor) {
+	case "success":
+		color = "good"
+	case "cancelled":
+		color = "#808080"
+	case "failure":
+		color = "danger"
+	default:
+		color = envOr(EnvSlackColor, "good")
+	}
+
 	msg := Webhook{
 		UserName:  os.Getenv(EnvSlackUserName),
 		IconURL:   os.Getenv(EnvSlackIcon),
@@ -186,7 +198,7 @@ func main() {
 		Attachments: []Attachment{
 			{
 				Fallback:   envOr(EnvSlackMessage, "GITHUB_ACTION="+os.Getenv("GITHUB_ACTION")+" \n GITHUB_ACTOR="+os.Getenv("GITHUB_ACTOR")+" \n GITHUB_EVENT_NAME="+os.Getenv("GITHUB_EVENT_NAME")+" \n GITHUB_REF="+os.Getenv("GITHUB_REF")+" \n GITHUB_REPOSITORY="+os.Getenv("GITHUB_REPOSITORY")+" \n GITHUB_WORKFLOW="+os.Getenv("GITHUB_WORKFLOW")),
-				Color:      envOr(EnvSlackColor, "good"),
+				Color:      color,
 				AuthorName: envOr(EnvGithubActor, ""),
 				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
 				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
