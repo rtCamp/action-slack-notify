@@ -26,6 +26,10 @@ const (
 	EnvMinimal        = "MSG_MINIMAL"
 )
 
+const (
+	OutputSlackThreadTs = "SLACK_THREAD_TS"
+)
+
 type Webhook struct {
 	Text        string       `json:"text,omitempty"`
 	UserName    string       `json:"username,omitempty"`
@@ -242,6 +246,10 @@ func send(endpoint string, msg Webhook) error {
 	}
 
 	fmt.Println(res.Status)
-	fmt.Printf("::set-output name=SLACK_THREAD_TS::%s\n", data.ThreadTs)
+	setOutput(OutputSlackThreadTs, data.ThreadTs)
 	return nil
+}
+
+func setOutput(name string, value string) {
+	fmt.Printf("::set-output name=%s::%s\n", name, value)
 }
