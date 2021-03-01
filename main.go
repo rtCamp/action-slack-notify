@@ -19,6 +19,7 @@ const (
 	EnvSlackColor     = "SLACK_COLOR"
 	EnvSlackUserName  = "SLACK_USERNAME"
 	EnvSlackFooter    = "SLACK_FOOTER"
+	EnvSlackThreadTs  = "SLACK_THREAD_TS"
 	EnvGithubActor    = "GITHUB_ACTOR"
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
@@ -33,6 +34,11 @@ type Webhook struct {
 	Channel     string       `json:"channel,omitempty"`
 	UnfurlLinks bool         `json:"unfurl_links"`
 	Attachments []Attachment `json:"attachments,omitempty"`
+	ThreadTs    string       `json:"thread_ts,omitempty"`
+}
+
+type WebhookResponse struct {
+	ThreadTs    string       `json:"ts"`
 }
 
 type Attachment struct {
@@ -194,6 +200,7 @@ func main() {
 				Fields:     fields,
 			},
 		},
+		ThreadTs: os.Getenv(EnvSlackThreadTs),
 	}
 
 	if err := send(endpoint, msg); err != nil {
@@ -223,6 +230,18 @@ func send(endpoint string, msg Webhook) error {
 	if res.StatusCode >= 299 {
 		return fmt.Errorf("Error on message: %s\n", res.Status)
 	}
+
+	defer res.Body.Close()
+
+	decoder := json.NewDecoder(res.Body)
+	var data WebhookResponse
+	err = decoder.Decode(&data)
+
+	if err != nil {
+		return fmt.Errorf("Failed to parse response data: %s\n", err)
+	}
+
 	fmt.Println(res.Status)
+	fmt.Printf("::set-output name=SLACK_THREAD_TS::%s\n", data.ThreadTs)
 	return nil
 }
