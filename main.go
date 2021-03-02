@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -237,13 +238,18 @@ func send(endpoint string, msg Webhook) error {
 
 	defer res.Body.Close()
 
-	decoder := json.NewDecoder(res.Body)
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+
+	//decoder := json.NewDecoder(bodyBytes)
 	var data WebhookResponse
-	err = decoder.Decode(&data)
+	json.Unmarshal([]byte(bodyBytes), &data)
+	// err = decoder.Decode(&data)
 
 	if err != nil {
 		return fmt.Errorf("Failed to parse response data: %s\n", err)
 	}
+	
+	fmt.Println(string(bodyBytes))
 
 	fmt.Println(res.Status)
 	setOutput(OutputSlackThreadTs, data.ThreadTs)
@@ -251,5 +257,6 @@ func send(endpoint string, msg Webhook) error {
 }
 
 func setOutput(name string, value string) {
+	fmt.Printf("DEBUG name=%s::%s\n", name, value)
 	fmt.Printf("::set-output name=%s::%s\n", name, value)
 }
