@@ -3,7 +3,10 @@ description: 'This action will send a notification to Slack'
 author: 'rtCamp'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/rtcamp/action-slack-notify:v2.1.2'
+  image: 'Dockerfile'
 branding:
   icon: 'bell'
   color: 'yellow'
+outputs:
+  SLACK_THREAD_TS:
+    description: 'The identifier of the sent Slack message'
