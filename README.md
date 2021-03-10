@@ -61,7 +61,7 @@ You can see the action block with all variables as below:
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_CHANNEL: general
-        SLACK_COLOR: ${{ job.status }}
+        SLACK_COLOR: ${{ job.status }} # or a specific color like 'green' or '#ff00ff'
         SLACK_ICON: https://github.com/rtCamp.png?size=48
         SLACK_MESSAGE: 'Post Content :rocket:'
         SLACK_TITLE: Post Title
