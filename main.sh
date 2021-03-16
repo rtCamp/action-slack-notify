@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 export GITHUB_BRANCH=${GITHUB_REF##*heads/}
-export SLACK_ICON=${SLACK_ICON}
-export SLACK_USERNAME=${SLACK_USERNAME}
+export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}
+export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
 export CI_SCRIPT_OPTIONS="ci_script_options"
 export SLACK_TITLE=${SLACK_TITLE:-"Message"}
 export COMMIT_MESSAGE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.commits[-1].message')
@@ -31,10 +31,7 @@ if [[ -n "$VAULT_GITHUB_TOKEN" ]] || [[ -n "$VAULT_TOKEN" ]]; then
 fi
 
 if [[ -f "$hosts_file" ]]; then
-	hostname=$(cat "$hosts_file" | shyaml get-value "$
-	
-	
-	.hostname")
+	hostname=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
 	user=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.user")
 	export HOST_NAME="\`$user@$hostname\`"
 	export DEPLOY_PATH=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")
