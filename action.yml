@@ -4,7 +4,7 @@ author: 'rtCamp'
 runs:
   using: 'docker'
 #  image: 'docker://ghcr.io/rtcamp/action-slack-notify:v2.1.3'
-  image: 'dockerfile'
+  image: 'Dockerfile'
 branding:
   icon: 'bell'
   color: 'yellow'
