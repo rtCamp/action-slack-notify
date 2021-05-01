@@ -114,7 +114,7 @@ func main() {
 				field := []Field{
 					{
 						Title: "Actions URL",
-						Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
+						Value: "<https://" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
 						Short: true,
 					},
 				}
@@ -123,7 +123,7 @@ func main() {
 				field := []Field{
 					{
 						Title: "Commit",
-						Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
+						Value: "<https://" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
 						Short: true,
 					},
 				}
@@ -144,12 +144,12 @@ func main() {
 			},
 			{
 				Title: "Actions URL",
-				Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
+				Value: "<https://" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
 				Short: true,
 			},
 			{
 				Title: "Commit",
-				Value: "<https://github.com/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
+				Value: "<https://" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
 				Short: true,
 			},
 			{
@@ -200,8 +200,8 @@ func main() {
 				Fallback:   envOr(EnvSlackMessage, "GITHUB_ACTION="+os.Getenv("GITHUB_ACTION")+" \n GITHUB_ACTOR="+os.Getenv("GITHUB_ACTOR")+" \n GITHUB_EVENT_NAME="+os.Getenv("GITHUB_EVENT_NAME")+" \n GITHUB_REF="+os.Getenv("GITHUB_REF")+" \n GITHUB_REPOSITORY="+os.Getenv("GITHUB_REPOSITORY")+" \n GITHUB_WORKFLOW="+os.Getenv("GITHUB_WORKFLOW")),
 				Color:      color,
 				AuthorName: envOr(EnvGithubActor, ""),
-				AuthorLink: "http://github.com/" + os.Getenv(EnvGithubActor),
-				AuthorIcon: "http://github.com/" + os.Getenv(EnvGithubActor) + ".png?size=32",
+				AuthorLink: "http://" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv(EnvGithubActor),
+				AuthorIcon: "http://" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv(EnvGithubActor) + ".png?size=32",
 				Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>"),
 				Fields:     fields,
 			},
