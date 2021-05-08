@@ -2,6 +2,7 @@
 
 export GITHUB_BRANCH=${GITHUB_REF##*heads/}
 export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}
+export SLACK_ICON_EMOJI=${SLACK_ICON_EMOJI}
 export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
 export CI_SCRIPT_OPTIONS="ci_script_options"
 export SLACK_TITLE=${SLACK_TITLE:-"Message"}
