@@ -46,8 +46,6 @@ Variable          | Default                                               | Purp
 SLACK_CHANNEL     | Set during Slack webhook creation                     | Specify Slack channel in which message needs to be sent
 SLACK_USERNAME    | `rtBot`                                               | Custom Slack Username sending the message. Does not need to be a "real" username.
 SLACK_MSG_AUTHOR  | `$GITHUB_ACTOR` (The person who triggered action).    | GitHub username of the person who has triggered the action. In case you want to modify it, please specify corrent GitHub username.
-SLACK_ICON        | ![rtBot Avatar](https://github.com/rtBot.png?size=32) | User/Bot icon shown with Slack message. It uses the URL supplied to this env variable to display the icon in slack message.
-SLACK_ICON_EMOJI  | -                                                     | User/Bot icon shown with Slack message, in case you do not wish to add a URL for slack icon as above, you can set slack emoji in this env variable. Example value: `:bell:` or any other valid slack emoji.
 SLACK_COLOR       | `good` (green)                                        | You can pass `${{ job.status }}` for automatic coloring or an RGB value like `#efefef` which would change color on left side vertical line of Slack message.
 SLACK_MESSAGE     | Generated from git commit message.                    | The main Slack message in attachment. It is advised not to override this.
 SLACK_TITLE       | Message                                               | Title to use before main Slack message.
@@ -62,7 +60,6 @@ You can see the action block with all variables as below:
       env:
         SLACK_CHANNEL: general
         SLACK_COLOR: ${{ job.status }} # or a specific color like 'green' or '#ff00ff'
-        SLACK_ICON: https://github.com/rtCamp.png?size=48
         SLACK_MESSAGE: 'Post Content :rocket:'
         SLACK_TITLE: Post Title
         SLACK_USERNAME: rtCamp
