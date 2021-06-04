@@ -20,14 +20,18 @@ if [[ -n "$user_slack_channel" ]]; then
 	export SLACK_CHANNEL="$user_slack_channel"
 fi
 
-# Login to vault using GH Token
-if [[ -n "$VAULT_GITHUB_TOKEN" ]]; then
-	unset VAULT_TOKEN
-	vault login -method=github token="$VAULT_GITHUB_TOKEN" > /dev/null
-fi
+# Check vault only if SLACK_WEBHOOK is empty.
+if [[ -z "$SLACK_WEBHOOK" ]]; then
 
-if [[ -n "$VAULT_GITHUB_TOKEN" ]] || [[ -n "$VAULT_TOKEN" ]]; then
-	export SLACK_WEBHOOK=$(vault read -field=webhook secret/slack)
+	# Login to vault using GH Token
+	if [[ -n "$VAULT_GITHUB_TOKEN" ]]; then
+		unset VAULT_TOKEN
+		vault login -method=github token="$VAULT_GITHUB_TOKEN" > /dev/null
+	fi
+
+	if [[ -n "$VAULT_GITHUB_TOKEN" ]] || [[ -n "$VAULT_TOKEN" ]]; then
+		export SLACK_WEBHOOK=$(vault read -field=webhook secret/slack)
+	fi
 fi
 
 if [[ -f "$hosts_file" ]]; then
