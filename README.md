@@ -109,9 +109,12 @@ GitHub action uses `VAULT_TOKEN` to connect to `VAULT_ADDR` to retrieve slack we
 
 In the Vault, the Slack webhook should be setup as field `webhook` on path `secret/slack`.
 
+## Credits
+Source: [technosophos/slack-notify](https://github.com/technosophos/slack-notify)
+
 ## License
 
-[MIT](LICENSE) © 2019 rtCamp
+[MIT](LICENSE) © 2022 rtCamp
 
 ## Does this interest you?
 
