@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 export GITHUB_BRANCH=${GITHUB_REF##*heads/}
-export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}
-export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
+#export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}
+export SLACK_ICON=${SLACK_ICON}
+#export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
+export SLACK_USERNAME=${SLACK_USERNAME}
 export CI_SCRIPT_OPTIONS="ci_script_options"
 export SLACK_TITLE=${SLACK_TITLE:-"Message"}
 export COMMIT_MESSAGE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.commits[-1].message')
