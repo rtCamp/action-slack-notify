@@ -181,7 +181,7 @@ func main() {
 	}
 
 	color := ""
-	switch os.Getenv(EnvSlackColor) {
+	switch strings.ToLower(os.Getenv(EnvSlackColor)){
 	case "success":
 		color = "good"
 	case "cancelled":
