@@ -29,6 +29,7 @@ RUN apk update \
 	jq \
 	ca-certificates \
 	python \
+	pip install --upgrade pip \
 	py2-pip \
 	rsync && \
 	pip install shyaml && \
