@@ -91,7 +91,7 @@ func main() {
 		commit_sha := long_sha[0:6]
 
 		color := ""
-		switch os.Getenv(EnvSlackColor) {
+		switch strings.ToLower(os.Getenv(EnvSlackColor)) {
 		case "success":
 			color = "good"
 			text = envOr(EnvSlackOnSuccess, text) // If exists, override with on success
