@@ -57,6 +57,7 @@ MSG_MINIMAL       | -                                                     | If s
 SLACK_ON_SUCCESS  | -                                                     | If set, will send the provided message instead of the default message when the passed status (through ``SLACK_COLOR``) is `success`.
 SLACK_ON_FAILURE  | -                                                     | If set, will send the provided message instead of the default message when the passed status (through ``SLACK_COLOR``) is `failure`.
 SLACK_ON_CANCEL   | -                                                     | If set, will send the provided message instead of the default message when the passed status (through ``SLACK_COLOR``) is `cancelled`.
+ENABLE_ESCAPES    | -                                                     | If set to `true`, enables backslash escapes in the message such as '\n', '\t', etc.
 
 You can see the action block with all variables as below:
 
