@@ -16,14 +16,19 @@ const (
 	EnvSlackChannel   = "SLACK_CHANNEL"
 	EnvSlackTitle     = "SLACK_TITLE"
 	EnvSlackMessage   = "SLACK_MESSAGE"
+	EnvSlackOnSuccess = "SLACK_MESSAGE_ON_SUCCESS"
+	EnvSlackOnFailure = "SLACK_MESSAGE_ON_FAILURE"
+	EnvSlackOnCancel  = "SLACK_MESSAGE_ON_CANCEL"
 	EnvSlackColor     = "SLACK_COLOR"
 	EnvSlackUserName  = "SLACK_USERNAME"
 	EnvSlackFooter    = "SLACK_FOOTER"
 	EnvGithubActor    = "GITHUB_ACTOR"
+	EnvGithubRun      = "GITHUB_RUN"
 	EnvSiteName       = "SITE_NAME"
 	EnvHostName       = "HOST_NAME"
 	EnvMinimal        = "MSG_MINIMAL"
 	EnvSlackLinkNames = "SLACK_LINK_NAMES"
+	EnvThreadTs       = "SLACK_THREAD_TS"
 )
 
 type Webhook struct {
@@ -35,6 +40,7 @@ type Webhook struct {
 	LinkNames   string       `json:"link_names,omitempty"`
 	UnfurlLinks bool         `json:"unfurl_links"`
 	Attachments []Attachment `json:"attachments,omitempty"`
+	ThreadTs    string       `json:"thread_ts,omitempty"`
 }
 
 type Attachment struct {
@@ -58,19 +64,42 @@ func main() {
 	endpoint := os.Getenv(EnvSlackWebhook)
 	if endpoint == "" {
 		fmt.Fprintln(os.Stderr, "URL is required")
-		os.Exit(1)
+		os.Exit(2)
 	}
 	text := os.Getenv(EnvSlackMessage)
 	if text == "" {
 		fmt.Fprintln(os.Stderr, "Message is required")
-		os.Exit(1)
+		os.Exit(3)
 	}
 	if strings.HasPrefix(os.Getenv("GITHUB_WORKFLOW"), ".github") {
-		os.Setenv("GITHUB_WORKFLOW", "Link to action run")
+		err := os.Setenv("GITHUB_WORKFLOW", "Link to action run.yaml")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to update the workflow's variables: %s\n\n", err)
+			os.Exit(4)
+		}
 	}
 
 	long_sha := os.Getenv("GITHUB_SHA")
 	commit_sha := long_sha[0:6]
+
+	color := ""
+	switch os.Getenv(EnvSlackColor) {
+	case "success":
+		color = "good"
+		text = envOr(EnvSlackOnSuccess, text) // If exists, override with on success
+	case "cancelled":
+		color = "#808080"
+		text = envOr(EnvSlackOnCancel, text) // If exists, override with on cancelled
+	case "failure":
+		color = "danger"
+		text = envOr(EnvSlackOnFailure, text) // If exists, override with on failure
+	default:
+		color = envOr(EnvSlackColor, "good")
+	}
+
+	if text == "" {
+		text = "EOM"
+	}
 
 	minimal := os.Getenv(EnvMinimal)
 	fields := []Field{}
@@ -78,7 +107,7 @@ func main() {
 		mainFields := []Field{
 			{
 				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
+				Value: text,
 				Short: false,
 			},
 		}
@@ -88,7 +117,7 @@ func main() {
 		mainFields := []Field{
 			{
 				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
+				Value: text,
 				Short: false,
 			},
 		}
@@ -156,7 +185,7 @@ func main() {
 			},
 			{
 				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
+				Value: text,
 				Short: false,
 			},
 		}
@@ -180,24 +209,13 @@ func main() {
 		fields = append(newfields, fields...)
 	}
 
-	color := ""
-	switch os.Getenv(EnvSlackColor) {
-	case "success":
-		color = "good"
-	case "cancelled":
-		color = "#808080"
-	case "failure":
-		color = "danger"
-	default:
-		color = envOr(EnvSlackColor, "good")
-	}
-
 	msg := Webhook{
 		UserName:  os.Getenv(EnvSlackUserName),
 		IconURL:   os.Getenv(EnvSlackIcon),
 		IconEmoji: os.Getenv(EnvSlackIconEmoji),
 		Channel:   os.Getenv(EnvSlackChannel),
 		LinkNames: os.Getenv(EnvSlackLinkNames),
+		ThreadTs:  os.Getenv(EnvThreadTs),
 		Attachments: []Attachment{
 			{
 				Fallback:   envOr(EnvSlackMessage, "GITHUB_ACTION="+os.Getenv("GITHUB_ACTION")+" \n GITHUB_ACTOR="+os.Getenv("GITHUB_ACTOR")+" \n GITHUB_EVENT_NAME="+os.Getenv("GITHUB_EVENT_NAME")+" \n GITHUB_REF="+os.Getenv("GITHUB_REF")+" \n GITHUB_REPOSITORY="+os.Getenv("GITHUB_REPOSITORY")+" \n GITHUB_WORKFLOW="+os.Getenv("GITHUB_WORKFLOW")),
@@ -205,7 +223,7 @@ func main() {
 				AuthorName: envOr(EnvGithubActor, ""),
 				AuthorLink: os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv(EnvGithubActor),
 				AuthorIcon: os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv(EnvGithubActor) + ".png?size=32",
-				Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library>"),
+				Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library> | <"+os.Getenv(EnvGithubRun)+"|Triggered on this workflow run>"),
 				Fields:     fields,
 			},
 		},
@@ -213,8 +231,10 @@ func main() {
 
 	if err := send(endpoint, msg); err != nil {
 		fmt.Fprintf(os.Stderr, "Error sending message: %s\n", err)
-		os.Exit(2)
+		os.Exit(1)
 	}
+
+	fmt.Fprintf(os.Stdout, "Successfully sent the message!")
 }
 
 func envOr(name, def string) string {
