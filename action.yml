@@ -2,8 +2,31 @@ name: 'Slack Notify'
 description: 'This action will send a notification to Slack'
 author: 'rtCamp'
 runs:
-  using: 'docker'
-  image: 'docker://ghcr.io/rtcamp/action-slack-notify:v2.2.1'
+#  using: 'docker'
+#  image: 'docker://ghcr.io/rtcamp/action-slack-notify:v2.2.1'
+    using: 'composite'
+    steps:
+      - name: "Slack-Markdown Conversion"
+        if: env.SLACKIFY_MARKDOWN == 'true'
+        id: slackify
+        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        with:
+          text: ${{ env.SLACK_MESSAGE }}
+
+      - name: "Update Message Variable (Formatted)"
+        if: env.SLACKIFY_MARKDOWN == 'true'
+        shell: sh
+        run: "echo 'SLACK_MESSAGE_FORMATTED=${{ steps.slackify.outputs.text }}' >> $GITHUB_ENV"
+
+      - name: "Update Message Variable (Unformatted)"
+        if: env.SLACKIFY_MARKDOWN == 'false'
+        shell: sh
+        run: "echo 'SLACK_MESSAGE_FORMATTED=${{ env.SLACK_MESSAGE }}' >> $GITHUB_ENV"
+
+      - name: "Slack Notification"
+        uses: rtCamp/action-slack-notify@v2.2.1
+        with:
+          SLACK_MESSAGE: "${{ env.SLACK_MESSAGE_FORMATTED }}"
 branding:
   icon: 'bell'
   color: 'yellow'
