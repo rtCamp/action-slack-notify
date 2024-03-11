@@ -16,6 +16,9 @@ const (
 	EnvSlackChannel   = "SLACK_CHANNEL"
 	EnvSlackTitle     = "SLACK_TITLE"
 	EnvSlackMessage   = "SLACK_MESSAGE"
+	EnvSlackOnSuccess = "SLACK_MESSAGE_ON_SUCCESS"
+	EnvSlackOnFailure = "SLACK_MESSAGE_ON_FAILURE"
+	EnvSlackOnCancel  = "SLACK_MESSAGE_ON_CANCEL"
 	EnvSlackColor     = "SLACK_COLOR"
 	EnvSlackUserName  = "SLACK_USERNAME"
 	EnvSlackFooter    = "SLACK_FOOTER"
@@ -66,11 +69,33 @@ func main() {
 		os.Exit(1)
 	}
 	if strings.HasPrefix(os.Getenv("GITHUB_WORKFLOW"), ".github") {
-		os.Setenv("GITHUB_WORKFLOW", "Link to action run")
+		err := os.Setenv("GITHUB_WORKFLOW", "Link to action run.yaml")
+		if err != nil {
+			os.Exit(1)
+		}
 	}
 
 	long_sha := os.Getenv("GITHUB_SHA")
 	commit_sha := long_sha[0:6]
+
+	color := ""
+	switch os.Getenv(EnvSlackColor) {
+	case "success":
+		color = "good"
+		text = envOr(EnvSlackOnSuccess, text) // If exists, override with on success
+	case "cancelled":
+		color = "#808080"
+		text = envOr(EnvSlackOnCancel, text) // If exists, override with on cancelled
+	case "failure":
+		color = "danger"
+		text = envOr(EnvSlackOnFailure, text) // If exists, override with on failure
+	default:
+		color = envOr(EnvSlackColor, "good")
+	}
+
+	if text == "" {
+		text = "EOM"
+	}
 
 	minimal := os.Getenv(EnvMinimal)
 	fields := []Field{}
@@ -78,7 +103,7 @@ func main() {
 		mainFields := []Field{
 			{
 				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
+				Value: text,
 				Short: false,
 			},
 		}
@@ -88,7 +113,7 @@ func main() {
 		mainFields := []Field{
 			{
 				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
+				Value: text,
 				Short: false,
 			},
 		}
@@ -156,7 +181,7 @@ func main() {
 			},
 			{
 				Title: os.Getenv(EnvSlackTitle),
-				Value: envOr(EnvSlackMessage, "EOM"),
+				Value: text,
 				Short: false,
 			},
 		}
@@ -178,18 +203,6 @@ func main() {
 			},
 		}
 		fields = append(newfields, fields...)
-	}
-
-	color := ""
-	switch os.Getenv(EnvSlackColor) {
-	case "success":
-		color = "good"
-	case "cancelled":
-		color = "#808080"
-	case "failure":
-		color = "danger"
-	default:
-		color = envOr(EnvSlackColor, "good")
 	}
 
 	msg := Webhook{
