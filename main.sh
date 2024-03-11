@@ -67,4 +67,4 @@ fi
 
 export SLACK_MESSAGE
 
-./slack-notify "$@"
+slack-notify "$@"
