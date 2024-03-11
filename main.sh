@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
-export GITHUB_BRANCH=${GITHUB_REF##*heads/}
-export SLACK_ICON=${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}
-export SLACK_USERNAME=${SLACK_USERNAME:-"rtBot"}
+export GITHUB_BRANCH="${GITHUB_REF##*heads/}"
+export SLACK_ICON="${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}"
+export SLACK_USERNAME="${SLACK_USERNAME:-"rtBot"}"
 export CI_SCRIPT_OPTIONS="ci_script_options"
-export SLACK_TITLE=${SLACK_TITLE:-"Message"}
-export COMMIT_MESSAGE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.commits[-1].message')
-export GITHUB_ACTOR=${SLACK_MSG_AUTHOR:-"$GITHUB_ACTOR"}
+export SLACK_TITLE="${SLACK_TITLE:-"Message"}"
+export GITHUB_ACTOR="${SLACK_MSG_AUTHOR:-"$GITHUB_ACTOR"}"
+
+COMMIT_MESSAGE="$(cat "$GITHUB_EVENT_PATH" | jq -r '.commits[-1].message')"
+export COMMIT_MESSAGE
 
 hosts_file="$GITHUB_WORKSPACE/.github/hosts.yml"
 
@@ -30,7 +32,8 @@ if [[ -z "$SLACK_WEBHOOK" ]]; then
 	fi
 
 	if [[ -n "$VAULT_GITHUB_TOKEN" ]] || [[ -n "$VAULT_TOKEN" ]]; then
-		export SLACK_WEBHOOK=$(vault read -field=webhook secret/slack)
+		SLACK_WEBHOOK="$(vault read -field=webhook secret/slack)"
+		export SLACK_WEBHOOK
 	fi
 fi
 
@@ -38,15 +41,16 @@ if [[ -f "$hosts_file" ]]; then
 	hostname=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
 	user=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.user")
 	export HOST_NAME="\`$user@$hostname\`"
-	export DEPLOY_PATH=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")
+	DEPLOY_PATH="$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.deploy_path")"
+	export DEPLOY_PATH
 
-	temp_url=${DEPLOY_PATH%%/app*}
+	temp_url="${DEPLOY_PATH%%/app*}"
 	export SITE_NAME="${temp_url##*sites/}"
     export HOST_TITLE="SSH Host"
 fi
 
-PR_SHA=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
-[[ 'null' != $PR_SHA ]] && export GITHUB_SHA="$PR_SHA"
+PR_SHA="$(cat "$GITHUB_EVENT_PATH" | jq -r .pull_request.head.sha)"
+[[ 'null' != "$PR_SHA" ]] && export GITHUB_SHA="$PR_SHA"
 
 if [[ -n "$SITE_NAME" ]]; then
     export SITE_TITLE="Site"
@@ -54,7 +58,13 @@ fi
 
 
 if [[ -z "$SLACK_MESSAGE" ]]; then
-	export SLACK_MESSAGE="$COMMIT_MESSAGE"
+	SLACK_MESSAGE="$COMMIT_MESSAGE"
 fi
+
+if [[ "true" == "$ENABLE_ESCAPES" ]]; then
+  SLACK_MESSAGE="$(echo -e "$SLACK_MESSAGE")"
+fi
+
+export SLACK_MESSAGE
 
 slack-notify "$@"
