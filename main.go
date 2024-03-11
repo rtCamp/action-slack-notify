@@ -24,6 +24,7 @@ const (
 	EnvHostName       = "HOST_NAME"
 	EnvMinimal        = "MSG_MINIMAL"
 	EnvSlackLinkNames = "SLACK_LINK_NAMES"
+	EnvThreadTs       = "SLACK_THREAD_TS"
 )
 
 type Webhook struct {
@@ -35,6 +36,7 @@ type Webhook struct {
 	LinkNames   string       `json:"link_names,omitempty"`
 	UnfurlLinks bool         `json:"unfurl_links"`
 	Attachments []Attachment `json:"attachments,omitempty"`
+	ThreadTs    string       `json:"thread_ts,omitempty"`
 }
 
 type Attachment struct {
@@ -66,7 +68,10 @@ func main() {
 		os.Exit(1)
 	}
 	if strings.HasPrefix(os.Getenv("GITHUB_WORKFLOW"), ".github") {
-		os.Setenv("GITHUB_WORKFLOW", "Link to action run")
+		err := os.Setenv("GITHUB_WORKFLOW", "Link to action run.yaml")
+		if err != nil {
+			os.Exit(1)
+		}
 	}
 
 	long_sha := os.Getenv("GITHUB_SHA")
@@ -198,6 +203,7 @@ func main() {
 		IconEmoji: os.Getenv(EnvSlackIconEmoji),
 		Channel:   os.Getenv(EnvSlackChannel),
 		LinkNames: os.Getenv(EnvSlackLinkNames),
+		ThreadTs:  os.Getenv(EnvThreadTs),
 		Attachments: []Attachment{
 			{
 				Fallback:   envOr(EnvSlackMessage, "GITHUB_ACTION="+os.Getenv("GITHUB_ACTION")+" \n GITHUB_ACTOR="+os.Getenv("GITHUB_ACTOR")+" \n GITHUB_EVENT_NAME="+os.Getenv("GITHUB_EVENT_NAME")+" \n GITHUB_REF="+os.Getenv("GITHUB_REF")+" \n GITHUB_REPOSITORY="+os.Getenv("GITHUB_REPOSITORY")+" \n GITHUB_WORKFLOW="+os.Getenv("GITHUB_WORKFLOW")),
