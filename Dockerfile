@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine3.11@sha256:6578dc0c1bde86ccef90e23da3cdaa77fe9208d23c1bb31d942c8b663a519fa5 AS builder
+FROM golang:1.22-alpine3.19@sha256:5a99b4049412cd34ad6b4e0c9527ae6beb9ae82d787b4bf3f4eff7aa13fc577a AS builder
 
 LABEL "com.github.actions.icon"="bell"
 LABEL "com.github.actions.color"="yellow"
@@ -15,8 +15,8 @@ ENV GOOS linux
 RUN go get -v ./...
 RUN go build -a -installsuffix cgo -ldflags '-w  -extldflags "-static"' -o /go/bin/slack-notify .
 
-# alpine:latest at 2023-08-23T11:48:25.468623934UTC
-FROM alpine@sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a
+# alpine:latest as of 2024-03-11
+FROM alpine@sha256:6457d53fb065d6f250e1504b9bc42d5b6c65941d57532c072d929dd0628977d0
 
 COPY --from=builder /go/bin/slack-notify /usr/bin/slack-notify
 
