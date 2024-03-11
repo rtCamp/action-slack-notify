@@ -54,6 +54,7 @@ SLACK_MESSAGE     | Generated from git commit message.                    | The 
 SLACK_TITLE       | Message                                               | Title to use before main Slack message.
 SLACK_FOOTER      | Powered By rtCamp's GitHub Actions Library            | Slack message footer.
 MSG_MINIMAL       | -                                                     | If set to `true`, removes: `Ref`, `Event`,  `Actions URL` and `Commit` from the message. You can optionally whitelist any of these 4 removed values by passing it comma separated to the variable instead of `true`. (ex: `MSG_MINIMAL: event` or `MSG_MINIMAL: ref,actions url`, etc.)
+ENABLE_ESCAPES    | -                                                     | If set to `true`, enables backslash escapes in the message such as '\n', '\t', etc.
 
 You can see the action block with all variables as below:
 
