@@ -37,6 +37,10 @@ if [[ -z "$SLACK_WEBHOOK" ]]; then
 	fi
 fi
 
+if [[ -z "$SLACK_WEBHOOK" ]]; then
+  printf "[\e[0;31mERROR\e[0m] Secret \`SLACK_WEBHOOK\` is missing. Falling back to using \`SLACK_TOKEN\` and \`SLACK_CHANNEL\`.\n"
+fi
+
 if [[ -f "$hosts_file" ]]; then
 	hostname=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.hostname")
 	user=$(cat "$hosts_file" | shyaml get-value "$GITHUB_BRANCH.user")
