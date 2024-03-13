@@ -30,6 +30,7 @@ const (
 	EnvMinimal        = "MSG_MINIMAL"
 	EnvSlackLinkNames = "SLACK_LINK_NAMES"
 	EnvThreadTs       = "SLACK_THREAD_TS"
+	EnvMessageMode    = "MSG_MODE"
 )
 
 type Webhook struct {
@@ -64,16 +65,24 @@ type Field struct {
 func main() {
 	endpoint := os.Getenv(EnvSlackWebhook)
 	custom_payload := envOr(EnvSlackCustom, "")
+	if endpoint == "" {
+		if os.Getenv(EnvSlackChannel) == "" {
+			fmt.Fprintln(os.Stderr, "Channel is required for sending message using a token")
+			os.Exit(1)
+		}
+		if os.Getenv(EnvMessageMode) == "TOKEN" {
+			endpoint = "https://slack.com/api/chat.postMessage"
+		} else {
+			fmt.Fprintln(os.Stderr, "URL is required")
+			os.Exit(2)
+		}
+	}
 	if custom_payload != "" {
 		if err := send_raw(endpoint, []byte(custom_payload)); err != nil {
 			fmt.Fprintf(os.Stderr, "Error sending message: %s\n", err)
 			os.Exit(2)
 		}
 	} else {
-		if endpoint == "" {
-			fmt.Fprintln(os.Stderr, "URL is required")
-			os.Exit(2)
-		}
 		text := os.Getenv(EnvSlackMessage)
 		if text == "" {
 			fmt.Fprintln(os.Stderr, "Message is required")
@@ -262,7 +271,27 @@ func send(endpoint string, msg Webhook) error {
 
 func send_raw(endpoint string, payload []byte) error {
 	b := bytes.NewBuffer(payload)
-	res, err := http.Post(endpoint, "application/json", b)
+
+	var res *http.Response
+	var err error
+
+	switch os.Getenv(EnvMessageMode) {
+	case "WEBHOOK":
+		res, err = http.Post(endpoint, "application/json", b)
+	case "TOKEN":
+		req, err := http.NewRequest("POST", endpoint, b)
+		if err != nil {
+			return fmt.Errorf("Error creating request: %s\n", err)
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", "Bearer "+os.Getenv("SLACK_TOKEN"))
+		client := &http.Client{}
+		res, err = client.Do(req)
+	default:
+		fmt.Fprintf(os.Stderr, "Invalid message mode: %s\n", os.Getenv(EnvMessageMode))
+		os.Exit(6)
+	}
+
 	if err != nil {
 		return err
 	}
