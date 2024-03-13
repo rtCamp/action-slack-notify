@@ -12,8 +12,7 @@ COPY main.go ${GOPATH}/src/github.com/rtcamp/action-slack-notify
 ENV CGO_ENABLED 0
 ENV GOOS linux
 
-RUN go get -v ./...
-RUN go build -a -installsuffix cgo -ldflags '-w  -extldflags "-static"' -o /go/bin/slack-notify .
+RUN go build -a -installsuffix cgo -ldflags '-w  -extldflags "-static"' -o /go/bin/slack-notify main.go
 
 # alpine:latest as of 2024-03-11
 FROM alpine@sha256:6457d53fb065d6f250e1504b9bc42d5b6c65941d57532c072d929dd0628977d0
@@ -31,7 +30,7 @@ RUN apk update \
 		python3 \
 		py3-pip \
 		rsync \
-	&& pip3 install shyaml \
+	&& python3 -m pip install --break-system-packages shyaml \
 	&& rm -rf /var/cache/apk/*
 
 # Setup Vault
