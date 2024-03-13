@@ -57,8 +57,12 @@ if [[ -n "$SITE_NAME" ]]; then
 fi
 
 
-if [[ -z "$SLACK_MESSAGE" ]]; then
+if [[ -z "$SLACK_MESSAGE" && "null" != "$COMMIT_MESSAGE" ]]; then
 	SLACK_MESSAGE="$COMMIT_MESSAGE"
+fi
+
+if [[ -z "$SLACK_MESSAGE" ]]; then
+  SLACK_MESSAGE="Notification from action run \`$GITHUB_RUN_NUMBER\`, which ran against commit \`${GITHUB_SHA}\` from branch \`${GITHUB_BRANCH}\` of \`${GITHUB_REPOSITORY}\` repository."
 fi
 
 if [[ "true" == "$ENABLE_ESCAPES" ]]; then
