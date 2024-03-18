@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
@@ -30,6 +32,7 @@ const (
 	EnvMinimal        = "MSG_MINIMAL"
 	EnvSlackLinkNames = "SLACK_LINK_NAMES"
 	EnvThreadTs       = "SLACK_THREAD_TS"
+	EnvSlackUpload    = "SLACK_FILE_UPLOAD"
 	EnvMessageMode    = "MSG_MODE"
 )
 
@@ -296,6 +299,74 @@ func send_raw(endpoint string, payload []byte) error {
 		os.Exit(6)
 	}
 
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode >= 299 {
+		return fmt.Errorf("Error on message: %s\n", res.Status)
+	}
+
+	if os.Getenv(EnvSlackUpload) != "" {
+		err = sendFile(os.Getenv(EnvSlackUpload), "", os.Getenv(EnvSlackChannel), os.Getenv(EnvThreadTs))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func sendFile(filename string, message string, channel string, thread_ts string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	fileData := &bytes.Buffer{}
+	writer := multipart.NewWriter(fileData)
+
+	part, err := writer.CreateFormFile("file", filename)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(part, file)
+
+	err = writer.WriteField("initial_comment", message)
+	if err != nil {
+		return err
+	}
+
+	err = writer.WriteField("channels", channel)
+	if err != nil {
+		return err
+	}
+
+	if thread_ts != "" {
+		err = writer.WriteField("thread_ts", thread_ts)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = writer.Close()
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", "https://slack.com/api/files.upload", fileData)
+
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("SLACK_TOKEN"))
+
+	client := &http.Client{}
+	res, err := client.Do(req)
 	if err != nil {
 		return err
 	}

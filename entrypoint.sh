@@ -27,6 +27,17 @@ fi
 
 export MSG_MODE="$mode"
 
+if [[ -n "$SLACK_FILE_UPLOAD" ]]; then
+  if [[ -z "$SLACK_TOKEN" ]]; then
+    echo -e "[\e[0;31mERROR\e[0m] Secret \`SLACK_TOKEN\` is missing and a file upload is specified. File Uploads require an application token to be present.\n"
+    exit 1
+  fi
+  if [[ -z "$SLACK_CHANNEL" ]]; then
+    echo -e "[\e[0;31mERROR\e[0m] Secret \`SLACK_CHANNEL\` is missing and a file upload is specified. File Uploads require a channel to be specified.\n"
+    exit 1
+  fi
+fi
+
 # custom path for files to override default files
 custom_path="$GITHUB_WORKSPACE/.github/slack"
 main_script="/main.sh"
