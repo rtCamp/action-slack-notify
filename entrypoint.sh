@@ -8,6 +8,7 @@ if [[ -z "$SLACK_WEBHOOK" ]]; then
     missing_secret="SLACK_WEBHOOK"
     if [[ -n "$VAULT_ADDR" ]] && [[ -n "$VAULT_TOKEN" ]]; then
         flag=0
+        echo -e "[\e[0;33mWARNING\e[0m] Both \`VAULT_ADDR\` and \`VAULT_TOKEN\` are provided. Using Vault for secrets. This feature is deprecated and will be removed in future versions. Please provide the credentials directly.\n"
     fi
     if [[ -n "$VAULT_ADDR" ]] || [[ -n "$VAULT_TOKEN" ]]; then
         missing_secret="VAULT_ADDR and/or VAULT_TOKEN"
