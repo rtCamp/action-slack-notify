@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
@@ -30,6 +32,7 @@ const (
 	EnvMinimal        = "MSG_MINIMAL"
 	EnvSlackLinkNames = "SLACK_LINK_NAMES"
 	EnvThreadTs       = "SLACK_THREAD_TS"
+	EnvSlackUpload    = "SLACK_FILE_UPLOAD"
 	EnvMessageMode    = "MSG_MODE"
 )
 
@@ -63,14 +66,14 @@ type Field struct {
 }
 
 func main() {
-	endpoint := os.Getenv(EnvSlackWebhook)
+	endpoint := getEnv(EnvSlackWebhook)
 	custom_payload := envOr(EnvSlackCustom, "")
 	if endpoint == "" {
-		if os.Getenv(EnvSlackChannel) == "" {
+		if getEnv(EnvSlackChannel) == "" {
 			fmt.Fprintln(os.Stderr, "Channel is required for sending message using a token")
 			os.Exit(1)
 		}
-		if os.Getenv(EnvMessageMode) == "TOKEN" {
+		if getEnv(EnvMessageMode) == "TOKEN" {
 			endpoint = "https://slack.com/api/chat.postMessage"
 		} else {
 			fmt.Fprintln(os.Stderr, "URL is required")
@@ -83,12 +86,12 @@ func main() {
 			os.Exit(2)
 		}
 	} else {
-		text := os.Getenv(EnvSlackMessage)
+		text := getEnv(EnvSlackMessage)
 		if text == "" {
 			fmt.Fprintln(os.Stderr, "Message is required")
 			os.Exit(3)
 		}
-		if strings.HasPrefix(os.Getenv("GITHUB_WORKFLOW"), ".github") {
+		if strings.HasPrefix(getEnv("GITHUB_WORKFLOW"), ".github") {
 			err := os.Setenv("GITHUB_WORKFLOW", "Link to action run.yaml")
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Unable to update the workflow's variables: %s\n\n", err)
@@ -96,11 +99,11 @@ func main() {
 			}
 		}
 
-		long_sha := os.Getenv("GITHUB_SHA")
+		long_sha := getEnv("GITHUB_SHA")
 		commit_sha := long_sha[0:6]
 
 		color := ""
-		switch strings.ToLower(os.Getenv(EnvSlackColor)) {
+		switch strings.ToLower(getEnv(EnvSlackColor)) {
 		case "success":
 			color = "good"
 			text = envOr(EnvSlackOnSuccess, text) // If exists, override with on success
@@ -118,12 +121,12 @@ func main() {
 			text = "EOM"
 		}
 
-		minimal := os.Getenv(EnvMinimal)
+		minimal := getEnv(EnvMinimal)
 		fields := []Field{}
 		if minimal == "true" {
 			mainFields := []Field{
 				{
-					Title: os.Getenv(EnvSlackTitle),
+					Title: getEnv(EnvSlackTitle),
 					Value: text,
 					Short: false,
 				},
@@ -133,7 +136,7 @@ func main() {
 			requiredFields := strings.Split(minimal, ",")
 			mainFields := []Field{
 				{
-					Title: os.Getenv(EnvSlackTitle),
+					Title: getEnv(EnvSlackTitle),
 					Value: text,
 					Short: false,
 				},
@@ -144,7 +147,7 @@ func main() {
 					field := []Field{
 						{
 							Title: "Ref",
-							Value: os.Getenv("GITHUB_REF"),
+							Value: getEnv("GITHUB_REF"),
 							Short: true,
 						},
 					}
@@ -153,7 +156,7 @@ func main() {
 					field := []Field{
 						{
 							Title: "Event",
-							Value: os.Getenv("GITHUB_EVENT_NAME"),
+							Value: getEnv("GITHUB_EVENT_NAME"),
 							Short: true,
 						},
 					}
@@ -162,7 +165,7 @@ func main() {
 					field := []Field{
 						{
 							Title: "Actions URL",
-							Value: "<" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
+							Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "/checks|" + getEnv("GITHUB_WORKFLOW") + ">",
 							Short: true,
 						},
 					}
@@ -171,7 +174,7 @@ func main() {
 					field := []Field{
 						{
 							Title: "Commit",
-							Value: "<" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
+							Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "|" + commit_sha + ">",
 							Short: true,
 						},
 					}
@@ -183,25 +186,25 @@ func main() {
 			mainFields := []Field{
 				{
 					Title: "Ref",
-					Value: os.Getenv("GITHUB_REF"),
+					Value: getEnv("GITHUB_REF"),
 					Short: true,
 				}, {
 					Title: "Event",
-					Value: os.Getenv("GITHUB_EVENT_NAME"),
+					Value: getEnv("GITHUB_EVENT_NAME"),
 					Short: true,
 				},
 				{
 					Title: "Actions URL",
-					Value: "<" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "/checks|" + os.Getenv("GITHUB_WORKFLOW") + ">",
+					Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "/checks|" + getEnv("GITHUB_WORKFLOW") + ">",
 					Short: true,
 				},
 				{
 					Title: "Commit",
-					Value: "<" + os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + "/commit/" + os.Getenv("GITHUB_SHA") + "|" + commit_sha + ">",
+					Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "|" + commit_sha + ">",
 					Short: true,
 				},
 				{
-					Title: os.Getenv(EnvSlackTitle),
+					Title: getEnv(EnvSlackTitle),
 					Value: text,
 					Short: false,
 				},
@@ -209,17 +212,17 @@ func main() {
 			fields = append(mainFields, fields...)
 		}
 
-		hostName := os.Getenv(EnvHostName)
+		hostName := getEnv(EnvHostName)
 		if hostName != "" {
 			newfields := []Field{
 				{
-					Title: os.Getenv("SITE_TITLE"),
-					Value: os.Getenv(EnvSiteName),
+					Title: getEnv("SITE_TITLE"),
+					Value: getEnv(EnvSiteName),
 					Short: true,
 				},
 				{
-					Title: os.Getenv("HOST_TITLE"),
-					Value: os.Getenv(EnvHostName),
+					Title: getEnv("HOST_TITLE"),
+					Value: getEnv(EnvHostName),
 					Short: true,
 				},
 			}
@@ -227,20 +230,20 @@ func main() {
 		}
 
 		msg := Webhook{
-			UserName:  os.Getenv(EnvSlackUserName),
-			IconURL:   os.Getenv(EnvSlackIcon),
-			IconEmoji: os.Getenv(EnvSlackIconEmoji),
-			Channel:   os.Getenv(EnvSlackChannel),
-			LinkNames: os.Getenv(EnvSlackLinkNames),
-			ThreadTs:  os.Getenv(EnvThreadTs),
+			UserName:  getEnv(EnvSlackUserName),
+			IconURL:   getEnv(EnvSlackIcon),
+			IconEmoji: getEnv(EnvSlackIconEmoji),
+			Channel:   getEnv(EnvSlackChannel),
+			LinkNames: getEnv(EnvSlackLinkNames),
+			ThreadTs:  getEnv(EnvThreadTs),
 			Attachments: []Attachment{
 				{
-					Fallback:   envOr(EnvSlackMessage, "GITHUB_ACTION="+os.Getenv("GITHUB_ACTION")+" \n GITHUB_ACTOR="+os.Getenv("GITHUB_ACTOR")+" \n GITHUB_EVENT_NAME="+os.Getenv("GITHUB_EVENT_NAME")+" \n GITHUB_REF="+os.Getenv("GITHUB_REF")+" \n GITHUB_REPOSITORY="+os.Getenv("GITHUB_REPOSITORY")+" \n GITHUB_WORKFLOW="+os.Getenv("GITHUB_WORKFLOW")),
+					Fallback:   envOr(EnvSlackMessage, "GITHUB_ACTION="+getEnv("GITHUB_ACTION")+" \n GITHUB_ACTOR="+getEnv("GITHUB_ACTOR")+" \n GITHUB_EVENT_NAME="+getEnv("GITHUB_EVENT_NAME")+" \n GITHUB_REF="+getEnv("GITHUB_REF")+" \n GITHUB_REPOSITORY="+getEnv("GITHUB_REPOSITORY")+" \n GITHUB_WORKFLOW="+getEnv("GITHUB_WORKFLOW")),
 					Color:      color,
 					AuthorName: envOr(EnvGithubActor, ""),
-					AuthorLink: os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv(EnvGithubActor),
-					AuthorIcon: os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv(EnvGithubActor) + ".png?size=32",
-					Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library> | <"+os.Getenv(EnvGithubRun)+"|Triggered on this workflow run>"),
+					AuthorLink: getEnv("GITHUB_SERVER_URL") + "/" + getEnv(EnvGithubActor),
+					AuthorIcon: getEnv("GITHUB_SERVER_URL") + "/" + getEnv(EnvGithubActor) + ".png?size=32",
+					Footer:     envOr(EnvSlackFooter, "<https://github.com/rtCamp/github-actions-library|Powered By rtCamp's GitHub Actions Library> | <"+getEnv(EnvGithubRun)+"|Triggered on this workflow run>"),
 					Fields:     fields,
 				},
 			},
@@ -254,9 +257,13 @@ func main() {
 	fmt.Fprintf(os.Stdout, "Successfully sent the message!")
 }
 
+func getEnv(name string) string {
+	return strings.TrimSpace(os.Getenv(name))
+}
+
 func envOr(name, def string) string {
 	if d, ok := os.LookupEnv(name); ok {
-		return d
+		return strings.TrimSpace(d)
 	}
 	return def
 }
@@ -275,7 +282,7 @@ func send_raw(endpoint string, payload []byte) error {
 	var res *http.Response
 	var err error
 
-	switch os.Getenv(EnvMessageMode) {
+	switch getEnv(EnvMessageMode) {
 	case "WEBHOOK":
 		res, err = http.Post(endpoint, "application/json", b)
 	case "TOKEN":
@@ -284,14 +291,82 @@ func send_raw(endpoint string, payload []byte) error {
 			return fmt.Errorf("Error creating request: %s\n", err)
 		}
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", "Bearer "+os.Getenv("SLACK_TOKEN"))
+		req.Header.Set("Authorization", "Bearer "+getEnv("SLACK_TOKEN"))
 		client := &http.Client{}
 		res, err = client.Do(req)
 	default:
-		fmt.Fprintf(os.Stderr, "Invalid message mode: %s\n", os.Getenv(EnvMessageMode))
+		fmt.Fprintf(os.Stderr, "Invalid message mode: %s\n", getEnv(EnvMessageMode))
 		os.Exit(6)
 	}
 
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode >= 299 {
+		return fmt.Errorf("Error on message: %s\n", res.Status)
+	}
+
+	if os.Getenv(EnvSlackUpload) != "" {
+		err = sendFile(os.Getenv(EnvSlackUpload), "", os.Getenv(EnvSlackChannel), os.Getenv(EnvThreadTs))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func sendFile(filename string, message string, channel string, thread_ts string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	fileData := &bytes.Buffer{}
+	writer := multipart.NewWriter(fileData)
+
+	part, err := writer.CreateFormFile("file", filename)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(part, file)
+
+	err = writer.WriteField("initial_comment", message)
+	if err != nil {
+		return err
+	}
+
+	err = writer.WriteField("channels", channel)
+	if err != nil {
+		return err
+	}
+
+	if thread_ts != "" {
+		err = writer.WriteField("thread_ts", thread_ts)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = writer.Close()
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", "https://slack.com/api/files.upload", fileData)
+
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("SLACK_TOKEN"))
+
+	client := &http.Client{}
+	res, err := client.Do(req)
 	if err != nil {
 		return err
 	}
