@@ -17,11 +17,11 @@ runs:
           SLACK_MESSAGE: "${{ steps.slackify.outputs.text }}"
           GITHUB_RUN: "${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}"
           ENABLE_ESCAPES: "true"
-        uses: "docker://ghcr.io/rtCamp/action-slack-notify:v2.2.1"
+        uses: "docker://ghcr.io/rtcamp/action-slack-notify:v2.2.1"
 
       - name: "Slack Notification (Unformatted)"
         if: env.SLACKIFY_MARKDOWN != 'true'
-        uses: "docker://ghcr.io/rtCamp/action-slack-notify:v2.2.1"
+        uses: "docker://ghcr.io/rtcamp/action-slack-notify:v2.2.1"
         env:
           GITHUB_RUN: "${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}"
 branding:
