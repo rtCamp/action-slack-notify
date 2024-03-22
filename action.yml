@@ -4,17 +4,41 @@ author: 'rtCamp'
 runs:
     using: 'composite'
     steps:
-      - name: "Slack-Markdown Conversion"
+      - name: "Slack-Markdown Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true'
-        id: slackify
+        id: slackify_message
         uses: LoveToKnow/slackify-markdown-action@v1.0.2
         with:
           text: ${{ env.SLACK_MESSAGE }}
 
+      - name: "Slack-Markdown Success Message Conversion"
+        if: env.SLACKIFY_MARKDOWN == 'true'
+        id: slackify_success_message
+        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        with:
+          text: ${{ env.SLACK_MESSAGE_ON_SUCCESS }}
+
+      - name: "Slack-Markdown Failure Message Conversion"
+        if: env.SLACKIFY_MARKDOWN == 'true'
+        id: slackify_failure_message
+        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        with:
+          text: ${{ env.SLACK_MESSAGE_ON_FAILURE }}
+
+      - name: "Slack-Markdown Cancel Message Conversion"
+        if: env.SLACKIFY_MARKDOWN == 'true'
+        id: slackify_cancel_message
+        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        with:
+          text: ${{ env.SLACK_MESSAGE_ON_CANCEL }}
+
       - name: "Slack Notification (Formatted)"
         if: env.SLACKIFY_MARKDOWN == 'true'
         env:
-          SLACK_MESSAGE: "${{ steps.slackify.outputs.text }}"
+          SLACK_MESSAGE: "${{ steps.slackify_message.outputs.text }}"
+          SLACK_MESSAGE_ON_SUCCESS: "${{ steps.slackify_success_message.outputs.text }}"
+          SLACK_MESSAGE_ON_FAILURE: "${{ steps.slackify_failure_message.outputs.text }}"
+          SLACK_MESSAGE_ON_CANCEL: "${{ steps.slackify_cancel_message.outputs.text }}"
           GITHUB_RUN: "${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}"
           ENABLE_ESCAPES: "true"
         uses: "docker://ghcr.io/rtcamp/action-slack-notify:v2.3.0"
