@@ -7,28 +7,28 @@ runs:
       - name: "Slack-Markdown Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true'
         id: slackify_message
-        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        uses: LoveToKnow/slackify-markdown-action@v1
         with:
           text: ${{ env.SLACK_MESSAGE }}
 
       - name: "Slack-Markdown Success Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true'
         id: slackify_success_message
-        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        uses: LoveToKnow/slackify-markdown-action@v1
         with:
           text: ${{ env.SLACK_MESSAGE_ON_SUCCESS }}
 
       - name: "Slack-Markdown Failure Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true'
         id: slackify_failure_message
-        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        uses: LoveToKnow/slackify-markdown-action@v1
         with:
           text: ${{ env.SLACK_MESSAGE_ON_FAILURE }}
 
       - name: "Slack-Markdown Cancel Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true'
         id: slackify_cancel_message
-        uses: LoveToKnow/slackify-markdown-action@v1.0.2
+        uses: LoveToKnow/slackify-markdown-action@v1
         with:
           text: ${{ env.SLACK_MESSAGE_ON_CANCEL }}
 
