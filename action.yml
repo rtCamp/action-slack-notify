@@ -5,40 +5,40 @@ runs:
     using: 'composite'
     steps:
       - name: "Slack-Markdown Message Conversion"
-        if: env.SLACKIFY_MARKDOWN == 'true'
+        if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE != ''
         id: slackify_message
         uses: LoveToKnow/slackify-markdown-action@v1
         with:
-          text: ${{ env.SLACK_MESSAGE }}
+          text: '${{ env.SLACK_MESSAGE }}'
 
       - name: "Slack-Markdown Success Message Conversion"
-        if: env.SLACKIFY_MARKDOWN == 'true'
+        if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE_ON_SUCCESS != ''
         id: slackify_success_message
         uses: LoveToKnow/slackify-markdown-action@v1
         with:
-          text: ${{ env.SLACK_MESSAGE_ON_SUCCESS }}
+          text: '${{ env.SLACK_MESSAGE_ON_SUCCESS }}'
 
       - name: "Slack-Markdown Failure Message Conversion"
-        if: env.SLACKIFY_MARKDOWN == 'true'
+        if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE_ON_FAILURE != ''
         id: slackify_failure_message
         uses: LoveToKnow/slackify-markdown-action@v1
         with:
-          text: ${{ env.SLACK_MESSAGE_ON_FAILURE }}
+          text: '${{ env.SLACK_MESSAGE_ON_FAILURE }}'
 
       - name: "Slack-Markdown Cancel Message Conversion"
-        if: env.SLACKIFY_MARKDOWN == 'true'
+        if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE_ON_CANCEL != ''
         id: slackify_cancel_message
         uses: LoveToKnow/slackify-markdown-action@v1
         with:
-          text: ${{ env.SLACK_MESSAGE_ON_CANCEL }}
+          text: '${{ env.SLACK_MESSAGE_ON_CANCEL }}'
 
       - name: "Slack Notification (Formatted)"
         if: env.SLACKIFY_MARKDOWN == 'true'
         env:
-          SLACK_MESSAGE: "${{ steps.slackify_message.outputs.text }}"
-          SLACK_MESSAGE_ON_SUCCESS: "${{ steps.slackify_success_message.outputs.text }}"
-          SLACK_MESSAGE_ON_FAILURE: "${{ steps.slackify_failure_message.outputs.text }}"
-          SLACK_MESSAGE_ON_CANCEL: "${{ steps.slackify_cancel_message.outputs.text }}"
+          SLACK_MESSAGE: "${{ steps.slackify_message.outputs.text || env.SLACK_MESSAGE }}"
+          SLACK_MESSAGE_ON_SUCCESS: "${{ steps.slackify_success_message.outputs.text || env.SLACK_MESSAGE_ON_SUCCESS }}"
+          SLACK_MESSAGE_ON_FAILURE: "${{ steps.slackify_failure_message.outputs.text || env.SLACK_MESSAGE_ON_FAILURE }}"
+          SLACK_MESSAGE_ON_CANCEL: "${{ steps.slackify_cancel_message.outputs.text || env.SLACK_MESSAGE_ON_CANCEL }}"
           GITHUB_RUN: "${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}"
           ENABLE_ESCAPES: "true"
         uses: "docker://ghcr.io/rtcamp/action-slack-notify:v2.3.0"
