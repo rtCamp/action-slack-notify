@@ -16,7 +16,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         body: |
-          We present you the new release of Action Slack Notify.
+          ## What's Changed
 
           **Changelog:**
         draft: true  # Creates a Draft Release
