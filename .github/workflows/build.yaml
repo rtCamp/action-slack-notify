@@ -46,7 +46,7 @@ jobs:
 
 
     - name: Slack Notification for Guideline
-      uses: KYRDTeam/action-slack-notify@v2
+      uses: KYRDTeam/action-slack-notify@latest
       env:
         SLACK_MESSAGE: ':rocket: Hello from KYRDTeam/action-slack-notify repo'
         SLACK_TITLE: ':rocket: Test'
