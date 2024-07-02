@@ -31,20 +31,9 @@ jobs:
       uses: google-github-actions/setup-gcloud@v0
     - name: Configure docker
       run: gcloud auth configure-docker      
-    # - name: Build and push
-    #   run: |
-    #     docker buildx build --platform linux/amd64,linux/arm64 -t $(echo 'asia.gcr.io/krystal-operation/krystal/${{ github.repository }}:${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]') --push .
-    - name: Docker build and push
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: Dockerfile
-        push: true
-        tags: |
-          asia.gcr.io/krystal-operation/krystal/${{ github.repository }}:${{ github.ref_name }}
-        provenance: false # https://github.com/docker/setup-buildx-action/issues/187
-
-
+    - name: Build and push
+      run: |
+        docker buildx build --platform linux/amd64,linux/arm64 -t $(echo 'asia.gcr.io/krystal-operation/krystal/action-slack-notify:${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]') --push .
     - name: Slack Notification for Guideline
       uses: KYRDTeam/action-slack-notify@master
       env:
