@@ -30,10 +30,3 @@ jobs:
     - name: Build and push
       run: |
         docker buildx build --platform linux/amd64,linux/arm64 -t $(echo 'asia.gcr.io/krystal-operation/krystal/action-slack-notify:${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]') --push .
-    - name: Slack Notification
-      uses: KYRDTeam/action-slack-notify@master
-      env:
-        SLACK_MESSAGE: ':rocket: Built a new image for KYRDTeam/action-slack-notify'
-        SLACK_TITLE: ':rocket: Built a new image for KYRDTeam/action-slack-notify'
-        SLACK_USERNAME: deployment-notifier
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST }}
