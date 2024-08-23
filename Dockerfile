@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine3.19@sha256:65b5d2d0a312fd9ef65551ad7f9cb5db1f209b7517ef6d5625cfd29248bc6c85 AS builder
+FROM golang:1.23-alpine3.19@sha256:fe8f9c7d418d3ac91787f11c31071c4814b6da5f9aae55bc581a7aacc264c395 AS builder
 
 LABEL "com.github.actions.icon"="bell"
 LABEL "com.github.actions.color"="yellow"
