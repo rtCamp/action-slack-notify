@@ -106,13 +106,25 @@ func main() {
 		switch strings.ToLower(getEnv(EnvSlackColor)) {
 		case "success":
 			color = "good"
-			text = envOr(EnvSlackOnSuccess, text) // If exists, override with on success
+			// If exists, override with on success
+			success_msg := envOr(EnvSlackOnSuccess, "")
+			if success_msg != "" {
+				text = success_msg
+			}
 		case "cancelled":
 			color = "#808080"
-			text = envOr(EnvSlackOnCancel, text) // If exists, override with on cancelled
+			// If exists, override with on cancel
+			cancel_msg := envOr(EnvSlackOnCancel, "")
+			if cancel_msg != "" {
+				text = cancel_msg
+			}
 		case "failure":
 			color = "danger"
-			text = envOr(EnvSlackOnFailure, text) // If exists, override with on failure
+			// If exists, override with on failure
+			failure_msg := envOr(EnvSlackOnFailure, "")
+			if failure_msg != "" {
+				text = failure_msg
+			}
 		default:
 			color = envOr(EnvSlackColor, "good")
 		}
