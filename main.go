@@ -264,10 +264,10 @@ func main() {
 		if err := send(endpoint, msg); err != nil {
 			fmt.Fprintf(os.Stderr, "Error sending message: %s\n", err)
 			os.Exit(1)
-			}
 		}
-		fmt.Fprintf(os.Stdout, "Successfully sent the message!")
 	}
+	fmt.Fprintf(os.Stdout, "Successfully sent the message!")
+}
 
 func getEnv(name string) string {
 	return strings.TrimSpace(os.Getenv(name))
