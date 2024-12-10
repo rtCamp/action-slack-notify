@@ -264,10 +264,10 @@ func main() {
 		if err := send(endpoint, msg); err != nil {
 			fmt.Fprintf(os.Stderr, "Error sending message: %s\n", err)
 			os.Exit(1)
+			}
 		}
+		fmt.Fprintf(os.Stdout, "Successfully sent the message!")
 	}
-	fmt.Fprintf(os.Stdout, "Successfully sent the message!")
-}
 
 func getEnv(name string) string {
 	return strings.TrimSpace(os.Getenv(name))
@@ -325,6 +325,15 @@ func send_raw(endpoint string, payload []byte) error {
 			return err
 		}
 	}
+
+	// Extract the `ts` value from the Slack response
+	ts, err := extractTs(res)
+	if err != nil {
+		return err
+	}
+
+	// Set the `ts` output
+	fmt.Printf("::set-output name=ts::%s\n", ts)
 
 	return nil
 }
@@ -388,4 +397,18 @@ func sendFile(filename string, message string, channel string, thread_ts string)
 	}
 	fmt.Println(res.Status)
 	return nil
+}
+
+// Function to extract the `ts` value from the Slack response
+func extractTs(res *http.Response) (string, error) {
+	defer res.Body.Close()
+	var responseBody map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&responseBody); err != nil {
+		return "", err
+	}
+	ts, ok := responseBody["ts"].(string)
+	if !ok {
+		return "", fmt.Errorf("Failed to extract ts from response")
+	}
+	return ts, nil
 }

@@ -81,4 +81,9 @@ export SLACK_MESSAGE_ON_SUCCESS
 export SLACK_MESSAGE_ON_FAILURE
 export SLACK_MESSAGE_ON_CANCEL
 
+# Handle the SLACK_THREAD_TS variable
+if [[ -n "$SLACK_THREAD_TS" ]]; then
+  export SLACK_THREAD_TS
+fi
+
 slack-notify "$@"

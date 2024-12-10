@@ -48,4 +48,9 @@ if [[ -d "$custom_path" ]]; then
     chmod +x /*.sh
 fi
 
+# Handle the SLACK_THREAD_TS variable
+if [[ -n "$SLACK_THREAD_TS" ]]; then
+  export SLACK_THREAD_TS
+fi
+
 bash "$main_script"

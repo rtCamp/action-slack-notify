@@ -48,6 +48,10 @@ runs:
         uses: "docker://ghcr.io/rtcamp/action-slack-notify:v2.3.2"
         env:
           GITHUB_RUN: "${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}"
+outputs:
+  ts:
+    description: 'The timestamp of the sent message'
+    value: ${{ steps.slack-notify.outputs.ts }}
 branding:
   icon: 'bell'
   color: 'yellow'
