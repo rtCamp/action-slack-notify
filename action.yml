@@ -14,7 +14,7 @@ runs:
       - name: "Slack-Markdown Success Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE_ON_SUCCESS != ''
         id: slackify_success_message
-        uses: LoveToKnow/slackify-markdown-action@v1
+        uses: LoveToKnow/slackify-markdown-action@698a1d4d0ff1794152a93c03ee8ca5e03a310d4e # v1
         with:
           text: '${{ env.SLACK_MESSAGE_ON_SUCCESS }}'
 
