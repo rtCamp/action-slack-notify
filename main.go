@@ -106,21 +106,18 @@ func main() {
 		switch strings.ToLower(getEnv(EnvSlackColor)) {
 		case "success":
 			color = "good"
-			// If exists, override with on success
 			success_msg := envOr(EnvSlackOnSuccess, "")
 			if success_msg != "" {
 				text = success_msg
 			}
 		case "cancelled":
 			color = "#808080"
-			// If exists, override with on cancel
 			cancel_msg := envOr(EnvSlackOnCancel, "")
 			if cancel_msg != "" {
 				text = cancel_msg
 			}
 		case "failure":
 			color = "danger"
-			// If exists, override with on failure
 			failure_msg := envOr(EnvSlackOnFailure, "")
 			if failure_msg != "" {
 				text = failure_msg
@@ -156,96 +153,58 @@ func main() {
 			for _, requiredField := range requiredFields {
 				switch strings.ToLower(requiredField) {
 				case "ref":
-					field := []Field{
-						{
-							Title: "Ref",
-							Value: getEnv("GITHUB_REF"),
-							Short: true,
-						},
-					}
-					mainFields = append(field, mainFields...)
+					field := Field{"Ref", getEnv("GITHUB_REF"), true}
+					mainFields = append([]Field{field}, mainFields...)
 				case "event":
-					field := []Field{
-						{
-							Title: "Event",
-							Value: getEnv("GITHUB_EVENT_NAME"),
-							Short: true,
-						},
-					}
-					mainFields = append(field, mainFields...)
+					field := Field{"Event", getEnv("GITHUB_EVENT_NAME"), true}
+					mainFields = append([]Field{field}, mainFields...)
 				case "actions url":
-					field := []Field{
-						{
-							Title: "Actions URL",
-							Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "/checks|" + getEnv("GITHUB_WORKFLOW") + ">",
-							Short: true,
-						},
+					field := Field{
+						"Actions URL",
+						"<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "/checks|" + getEnv("GITHUB_WORKFLOW") + ">",
+						true,
 					}
-					mainFields = append(field, mainFields...)
+					mainFields = append([]Field{field}, mainFields...)
 				case "commit":
-					field := []Field{
-						{
-							Title: "Commit",
-							Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "|" + commit_sha + ">",
-							Short: true,
-						},
+					field := Field{
+						"Commit",
+						"<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "|" + commit_sha + ">",
+						true,
 					}
-					mainFields = append(field, mainFields...)
+					mainFields = append([]Field{field}, mainFields...)
 				}
 			}
 			fields = append(mainFields, fields...)
 		} else {
 			mainFields := []Field{
+				{"Ref", getEnv("GITHUB_REF"), true},
+				{"Event", getEnv("GITHUB_EVENT_NAME"), true},
 				{
-					Title: "Ref",
-					Value: getEnv("GITHUB_REF"),
-					Short: true,
-				}, {
-					Title: "Event",
-					Value: getEnv("GITHUB_EVENT_NAME"),
-					Short: true,
+					"Actions URL",
+					"<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "/checks|" + getEnv("GITHUB_WORKFLOW") + ">",
+					true,
 				},
 				{
-					Title: "Actions URL",
-					Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "/checks|" + getEnv("GITHUB_WORKFLOW") + ">",
-					Short: true,
+					"Commit",
+					"<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "|" + commit_sha + ">",
+					true,
 				},
-				{
-					Title: "Commit",
-					Value: "<" + getEnv("GITHUB_SERVER_URL") + "/" + getEnv("GITHUB_REPOSITORY") + "/commit/" + getEnv("GITHUB_SHA") + "|" + commit_sha + ">",
-					Short: true,
-				},
-				{
-					Title: getEnv(EnvSlackTitle),
-					Value: text,
-					Short: false,
-				},
+				{getEnv(EnvSlackTitle), text, false},
 			}
 			fields = append(mainFields, fields...)
 		}
 
-		hostName := getEnv(EnvHostName)
-		if hostName != "" {
-			newfields := []Field{
-				{
-					Title: getEnv("SITE_TITLE"),
-					Value: getEnv(EnvSiteName),
-					Short: true,
-				},
-				{
-					Title: getEnv("HOST_TITLE"),
-					Value: getEnv(EnvHostName),
-					Short: true,
-				},
-			}
-			fields = append(newfields, fields...)
+		if getEnv(EnvHostName) != "" {
+			fields = append(fields,
+				Field{getEnv("SITE_TITLE"), getEnv(EnvSiteName), true},
+				Field{getEnv("HOST_TITLE"), getEnv(EnvHostName), true},
+			)
 		}
 
 		msg := Webhook{
 			UserName:  getEnv(EnvSlackUserName),
 			IconURL:   getEnv(EnvSlackIcon),
 			IconEmoji: getEnv(EnvSlackIconEmoji),
-			Channel:   getEnv(EnvSlackChannel),
 			LinkNames: getEnv(EnvSlackLinkNames),
 			ThreadTs:  getEnv(EnvThreadTs),
 			Attachments: []Attachment{
@@ -261,9 +220,14 @@ func main() {
 			},
 		}
 
-		if err := send(endpoint, msg); err != nil {
-			fmt.Fprintf(os.Stderr, "Error sending message: %s\n", err)
-			os.Exit(1)
+		// ✅ Loop through comma-separated channels and send message to each
+		channels := strings.Split(getEnv(EnvSlackChannel), ",")
+		for _, ch := range channels {
+			msg.Channel = strings.TrimSpace(ch)
+			if err := send(endpoint, msg); err != nil {
+				fmt.Fprintf(os.Stderr, "Error sending message to channel %s: %s\n", ch, err)
+				os.Exit(1)
+			}
 		}
 	}
 	fmt.Fprintf(os.Stdout, "Successfully sent the message!")
@@ -369,7 +333,6 @@ func sendFile(filename string, message string, channel string, thread_ts string)
 	}
 
 	req, err := http.NewRequest("POST", "https://slack.com/api/files.upload", fileData)
-
 	if err != nil {
 		return err
 	}
