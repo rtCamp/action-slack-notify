@@ -32,6 +32,22 @@ jobs:
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+### 📢 Send Notification to Multiple Slack Channels
+
+You can notify multiple Slack channels by providing a comma-separated list of channel names:
+
+```yaml
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: "#general,#build-status"
+          SLACK_MESSAGE: "🚀 Deployment completed successfully!"
+
 ```
 
 3. Create `SLACK_WEBHOOK` secret using [GitHub Action's Secret](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#creating-encrypted-secrets-for-a-repository). You can [generate a Slack incoming webhook token from here](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks).
