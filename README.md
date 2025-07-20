@@ -129,3 +129,23 @@ Source: [technosophos/slack-notify](https://github.com/technosophos/slack-notify
 ## Does this interest you?
 
 <a href="https://rtcamp.com/"><img src="https://rtcamp.com/wp-content/uploads/sites/2/2019/04/github-banner@2x.png" alt="Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions"></a>
+
+## 📦 How to Use This GitHub Action
+
+To use this action in your GitHub Actions workflow, add the following to your `.github/workflows/your-workflow.yml` file:
+
+```yaml
+name: Slack Notify Example
+
+on: [push]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        uses: Ranashubham19/action-slack-notify@main
+        with:
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          message: 'Hello from GitHub Actions!'
+
