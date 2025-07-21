@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Slack Notification
-        uses: Ranashubham19/action-slack-notify@main
+        uses: rtcamp/action-slack-notify@main
         with:
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
           message: 'Hello from GitHub Actions!'
