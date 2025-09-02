@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 export GITHUB_BRANCH="${GITHUB_REF##*heads/}"
-export SLACK_ICON="${SLACK_ICON:-"https://avatars0.githubusercontent.com/u/43742164"}"
+# Changed to taktile-org controlled one.
+export SLACK_ICON="${SLACK_ICON:-"https://avatars.githubusercontent.com/u/63606323?s=200&v=4"}"
 export SLACK_USERNAME="${SLACK_USERNAME:-"rtBot"}"
 export CI_SCRIPT_OPTIONS="ci_script_options"
 export SLACK_TITLE="${SLACK_TITLE:-"Message"}"
