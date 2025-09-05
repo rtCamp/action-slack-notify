@@ -7,28 +7,28 @@ runs:
       - name: "Slack-Markdown Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE != ''
         id: slackify_message
-        uses: tktl-forks/slackify-markdown-action #v1.1.1
+        uses: tktl-forks/slackify-markdown-actio@37ad9f3fba5a230e2c0a5dc6b56cc3e5b89abf82 #v1.1.1
         with:
           text: '${{ env.SLACK_MESSAGE }}'
 
       - name: "Slack-Markdown Success Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE_ON_SUCCESS != ''
         id: slackify_success_message
-        uses: tktl-forks/slackify-markdown-action #v1.1.1
+        uses: tktl-forks/slackify-markdown-action@37ad9f3fba5a230e2c0a5dc6b56cc3e5b89abf82 #v1.1.1
         with:
           text: '${{ env.SLACK_MESSAGE_ON_SUCCESS }}'
 
       - name: "Slack-Markdown Failure Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE_ON_FAILURE != ''
         id: slackify_failure_message
-        uses: tktl-forks/slackify-markdown-action #v1.1.1
+        uses: tktl-forks/slackify-markdown-action@37ad9f3fba5a230e2c0a5dc6b56cc3e5b89abf82 #v1.1.1
         with:
           text: '${{ env.SLACK_MESSAGE_ON_FAILURE }}'
 
       - name: "Slack-Markdown Cancel Message Conversion"
         if: env.SLACKIFY_MARKDOWN == 'true' && env.SLACK_MESSAGE_ON_CANCEL != ''
         id: slackify_cancel_message
-        uses: tktl-forks/slackify-markdown-action #v1.1.1
+        uses: tktl-forks/slackify-markdown-action@37ad9f3fba5a230e2c0a5dc6b56cc3e5b89abf82 #v1.1.1
         with:
           text: '${{ env.SLACK_MESSAGE_ON_CANCEL }}'
 
