@@ -79,6 +79,48 @@ You can see the action block with all variables as below:
         SLACK_USERNAME: rtCamp
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 ```
+### Post a message in a Slack thread
+
+You can reply to an existing Slack message thread by setting the `SLACK_THREAD_TS` environment variable.
+
+#### How to get a `thread_ts` from a Slack message
+1. In Slack, open the **parent message** you want to reply to.
+2. Click **More actions → Copy link** (or right-click the message → Copy link).
+3. The copied link ends with something like `/p1700000000123456`.
+4. Convert it to a timestamp by inserting a dot before the last 6 digits:
+1700000000.123456
+
+5. Use this value in `SLACK_THREAD_TS`.
+
+#### Example: Post a parent message, then reply in the thread
+```yaml
+name: Slack thread example
+on: workflow_dispatch
+
+jobs:
+notify:
+ runs-on: ubuntu-latest
+ steps:
+   - name: Send parent message
+     id: slack_parent
+     uses: rtCamp/action-slack-notify@v2
+     env:
+       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+       SLACK_MESSAGE: "Deployment started"
+       SLACK_COLOR: good
+
+   - name: Reply in the same thread
+     uses: rtCamp/action-slack-notify@v2
+     env:
+       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+       SLACK_MESSAGE: "Deployment status: ${{ job.status }}"
+       SLACK_COLOR: ${{ job.status }}
+       # Option 1: Paste the timestamp directly
+       # SLACK_THREAD_TS: "1700000000.123456"
+       #
+       # Option 2: Use the timestamp output from the first step
+       SLACK_THREAD_TS: "${{ steps.slack_parent.outputs.ts }}"
+This update addresses #210 by showing exactly how to obtain and use SLACK_THREAD_TS in a workflow.
 
 Below screenshot help you visualize message part controlled by different variables:
 
