@@ -13,7 +13,7 @@ jobs:
       run: |
         echo "release_name=${GITHUB_REF_NAME/v/Version }" >> $GITHUB_ENV
     - name: Publish a Draft Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         body: |
           ## What's Changed
