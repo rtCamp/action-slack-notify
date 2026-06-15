@@ -138,6 +138,7 @@ func main() {
 		if minimal == "true" {
 			mainFields := []Field{
 				{
+					Title: getEnv(EnvSlackTitle),
 					Value: text,
 					Short: false,
 				},
