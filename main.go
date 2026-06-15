@@ -146,15 +146,26 @@ func main() {
 			fields = append(mainFields, fields...)
 		} else if minimal != "" {
 			requiredFields := strings.Split(minimal, ",")
+			showTitle := false
+			for _, f := range requiredFields {
+				if strings.ToLower(strings.TrimSpace(f)) == "title" {
+					showTitle = true
+					break
+				}
+			}
+			titleValue := ""
+			if showTitle {
+				titleValue = getEnv(EnvSlackTitle)
+			}
 			mainFields := []Field{
 				{
-					Title: getEnv(EnvSlackTitle),
+					Title: titleValue,
 					Value: text,
 					Short: false,
 				},
 			}
 			for _, requiredField := range requiredFields {
-				switch strings.ToLower(requiredField) {
+				switch strings.ToLower(strings.TrimSpace(requiredField)) {
 				case "ref":
 					field := []Field{
 						{
