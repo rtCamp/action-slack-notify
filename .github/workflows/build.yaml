@@ -13,7 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         - name: Checkout
-          uses: actions/checkout@v6
+          uses: actions/checkout@v7
         - name: install docker emulation
           run: docker run --rm --privileged tonistiigi/binfmt:latest --install amd64,arm64
         - name: Set up buildx
