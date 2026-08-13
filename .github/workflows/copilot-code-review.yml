@@ -1,0 +1,22 @@
+name: Copilot code review setup steps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-code-review.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-code-review.yml
+
+jobs:
+  # The job must be named `copilot-setup-steps`, or Copilot ignores this file.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Start Review
+        run: echo "Starting Review."
