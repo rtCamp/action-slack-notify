@@ -27,18 +27,27 @@ if [[ "$flag" -eq 1 ]]; then
 fi
 
 export MSG_MODE="$mode"
-
-if [[ -n "$SLACK_FILE_UPLOAD" ]]; then
-  if [[ -z "$SLACK_TOKEN" ]]; then
-    echo -e "[\e[0;31mERROR\e[0m] Secret \`SLACK_TOKEN\` is missing and a file upload is specified. File Uploads require an application token to be present.\n"
-    exit 1
+#####
+if [[-n "$SLACK_FILE_UPLOAD"]]; then
+  if [[-z "$SLACK_TOKEN"]]; then
+  echo "::ERROR :: SLACK_TOKEN is required for the file upload"
+  exit 1
   fi
   if [[ -z "$SLACK_CHANNEL" ]]; then
-    echo -e "[\e[0;31mERROR\e[0m] Secret \`SLACK_CHANNEL\` is missing and a file upload is specified. File Uploads require a channel to be specified.\n"
+    echo "::error::SLACK_CHANNEL is required for file upload"
     exit 1
   fi
-fi
+  if [[ ! -f "$SLACK_FILE_UPLOAD" ]]; then
+    echo "::error::File not found: $SLACK_FILE_UPLOAD"
+    exit 1
+  fi
 
+  curl -F file=@"$STACK_FILE_UPLOAD"\
+   -F channels="$SLACK_CHANNEL" \
+       -H "Authorization: Bearer $SLACK_TOKEN" \
+       https://slack.com/api/files.upload
+fi
+#####
 # custom path for files to override default files
 custom_path="$GITHUB_WORKSPACE/.github/slack"
 main_script="/main.sh"
